@@ -1,0 +1,9 @@
+[package]
+name = "tetrs"
+version = "0.1.0"
+authors = ["Simon Whitehead <chemnova@gmail.com>"]
+
+[dependencies]
+piston_window = "0.55.0"
+pistoncore-sdl2_window = "0.36.0"
+piston2d-opengl_graphics = "0.34.0"
