@@ -6,29 +6,30 @@ use piston_window::*;
 use game::Game;
 
 pub struct GameWindow {
-    width: usize,
-    height: usize,
+    width: u32,
+    height: u32,
     piston_window: PistonWindow,
     game: Game,
 }
 
 impl GameWindow {
-    pub fn new(width: u32, height: u32) -> GameWindow {
-        let opengl = OpenGL::V3_2;
-        let mut window: PistonWindow = WindowSettings::new("piston: sprite", (width, height))
-            .exit_on_esc(true)
-            .opengl(opengl)
-            .build()
-            .unwrap();
-
-        let game = Game::new();
-
+    pub fn new<S>(width: u32, height: u32, title: S) -> GameWindow
+        where S: Into<String>
+    {
         GameWindow {
-            piston_window: window,
-            game: game,
-            width: 640,
-            height: 480,
+            piston_window: Self::create_window(width, height, title.into()),
+            game: Game::new(),
+            width: width,
+            height: height,
         }
+    }
+
+    fn create_window(width: u32, height: u32, title: String) -> PistonWindow {
+        WindowSettings::new(title, (width, height))
+            .exit_on_esc(true)
+            .opengl(OpenGL::V3_2)
+            .build()
+            .unwrap()
     }
 
     pub fn process(&self, e: &Event) -> bool {

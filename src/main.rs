@@ -7,7 +7,7 @@ use piston_window::*;
 use game::{Game, GameWindow};
 
 fn main() {
-    let mut window = GameWindow::new(300, 300);
+    let mut window = GameWindow::new(300, 300, "TetRS");
     let mut game = Game::new();
 
     while let Some(e) = window.next() {
