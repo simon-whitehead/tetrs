@@ -1,7 +1,7 @@
 
 use piston_window::*;
 
-use ::game::window::GameWindow;
+use ::engine::GameWindow;
 
 pub struct Game {
     time: f64,
@@ -25,12 +25,27 @@ impl Game {
             Event::Update(update) => {
                 self.time = self.time + update.dt;
             }
+            Event::Input(ref input_event) => {
+                self.handle_input(input_event);
+            }
             _ => (),
         }
 
         self.drop_active_block();
 
         true
+    }
+
+    fn handle_input(&mut self, input: &Input) {
+        if let Input::Press(ref button) = *input {
+            match *button {
+                Button::Keyboard(Key::Space) => println!("Space pressed!"),
+                Button::Keyboard(Key::Left) => println!("Left pressed!"),
+                Button::Keyboard(Key::Right) => println!("Right pressed!"),
+                Button::Keyboard(Key::Down) => println!("Down pressed!"),
+                _ => (),
+            }
+        }
     }
 
     fn drop_active_block(&mut self) {

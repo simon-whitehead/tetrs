@@ -3,7 +3,7 @@ use std::ops::{Deref, DerefMut};
 
 use piston_window::*;
 
-use game::Game;
+use ::game::Game;
 
 pub struct GameWindow {
     width: u32,

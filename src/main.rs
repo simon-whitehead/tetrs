@@ -1,10 +1,12 @@
 mod game;
+mod engine;
 
 extern crate piston_window;
 
 use piston_window::*;
 
-use game::{Game, GameWindow};
+use game::Game;
+use engine::GameWindow;
 
 fn main() {
     let mut window = GameWindow::new(300, 300, "TetRS");
