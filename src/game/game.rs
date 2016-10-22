@@ -5,8 +5,11 @@ use piston_window::*;
 
 use ::engine::{GameWindow, Timer, TimerTickResult};
 
+use ::game::grid::Grid;
+
 pub struct Game {
     time: Rc<Cell<f64>>,
+    grid: Grid,
     rec_y: f64,
     next_block_move: f64,
     next_block_move_time: f64,
@@ -19,6 +22,7 @@ impl Game {
 
         Game {
             time: time.clone(),
+            grid: Grid::new(),
             rec_y: 20.0,
             next_block_move: 1.0,
             next_block_move_time: 0.5,
@@ -75,6 +79,9 @@ impl Game {
     pub fn render(&self, window: &mut GameWindow, e: &Event) {
         window.draw_2d(e, |c, g| {
             clear([1.0, 1.0, 1.0, 1.0], g);
+
+            self.grid.render(c, g, &e);
+
             rectangle([1.0, 0.0, 0.0, 1.0], // red
                       [20.0, self.rec_y, 20.0, 20.0], // rectangle
                       c.transform,
