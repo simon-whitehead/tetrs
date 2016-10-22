@@ -1,29 +1,40 @@
+use std::cell::Cell;
+use std::rc::Rc;
 
 use piston_window::*;
 
-use ::engine::GameWindow;
+use ::engine::{GameWindow, Timer, TimerTickResult};
 
 pub struct Game {
-    time: f64,
+    time: Rc<Cell<f64>>,
     rec_y: f64,
     next_block_move: f64,
     next_block_move_time: f64,
+    block_drop_timer: Timer,
 }
 
 impl Game {
     pub fn new() -> Game {
+        let time = Rc::new(Cell::new(0.0));
+
         Game {
-            time: 0.0,
-            rec_y: 0.0,
+            time: time.clone(),
+            rec_y: 20.0,
             next_block_move: 1.0,
             next_block_move_time: 0.5,
+            block_drop_timer: Timer::new(0.5, time.clone()),
         }
     }
 
     pub fn process(&mut self, e: &Event) -> bool {
         match *e {
             Event::Update(update) => {
-                self.time = self.time + update.dt;
+                self.time.set(self.time.get() + update.dt);
+
+                if self.block_drop_timer.elapsed() {
+                    self.drop_block();
+                    self.block_drop_timer.reset();
+                }
             }
             Event::Input(ref input_event) => {
                 self.handle_input(input_event);
@@ -31,9 +42,11 @@ impl Game {
             _ => (),
         }
 
-        self.drop_active_block();
-
         true
+    }
+
+    fn drop_block(&mut self) {
+        self.rec_y = self.rec_y + 10.0;
     }
 
     fn handle_input(&mut self, input: &Input) {
@@ -50,17 +63,14 @@ impl Game {
 
     fn drop_active_block(&mut self) {
         // Move the active block down if its been longer than the wait time
-        if self.time - self.next_block_move > self.next_block_move_time {
-            self.rec_y = self.rec_y + 50.0;
-            self.next_block_move = self.time + 1.0;
-        }
+        self.rec_y = self.rec_y + 50.0;
     }
 
     pub fn render(&self, window: &mut GameWindow, e: &Event) {
         window.draw_2d(e, |c, g| {
             clear([1.0, 1.0, 1.0, 1.0], g);
             rectangle([1.0, 0.0, 0.0, 1.0], // red
-                      [0.0, self.rec_y, 100.0, 100.0], // rectangle
+                      [20.0, self.rec_y, 20.0, 20.0], // rectangle
                       c.transform,
                       g);
         });

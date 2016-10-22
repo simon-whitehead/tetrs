@@ -3,13 +3,10 @@ use std::ops::{Deref, DerefMut};
 
 use piston_window::*;
 
-use ::game::Game;
-
 pub struct GameWindow {
     width: u32,
     height: u32,
     piston_window: PistonWindow,
-    game: Game,
 }
 
 impl GameWindow {
@@ -18,7 +15,6 @@ impl GameWindow {
     {
         GameWindow {
             piston_window: Self::create_window(width, height, title.into()),
-            game: Game::new(),
             width: width,
             height: height,
         }
@@ -31,12 +27,6 @@ impl GameWindow {
             .build()
             .unwrap()
     }
-
-    pub fn process(&mut self, e: &Event) -> bool {
-        self.game.process(&e)
-    }
-
-    pub fn render(&self) {}
 }
 
 impl Deref for GameWindow {

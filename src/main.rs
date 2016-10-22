@@ -9,7 +9,7 @@ use game::Game;
 use engine::GameWindow;
 
 fn main() {
-    let mut window = GameWindow::new(300, 300, "TetRS");
+    let mut window = GameWindow::new(800, 600, "TetRS");
     let mut game = Game::new();
 
     while let Some(e) = window.next() {
