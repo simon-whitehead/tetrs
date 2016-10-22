@@ -32,7 +32,7 @@ impl GameWindow {
             .unwrap()
     }
 
-    pub fn process(&self, e: &Event) -> bool {
+    pub fn process(&mut self, e: &Event) -> bool {
         self.game.process(&e)
     }
 
