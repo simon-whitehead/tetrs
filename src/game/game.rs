@@ -15,7 +15,7 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Game {
-        let time = Rc::new(Cell::new(0.0));
+        let time = RcCell!(0.0);
 
         Game {
             time: time.clone(),
@@ -29,12 +29,11 @@ impl Game {
     pub fn process(&mut self, e: &Event) -> bool {
         match *e {
             Event::Update(update) => {
-                self.time.set(self.time.get() + update.dt);
+                // Update the globa game time
+                self.update_time(update.dt);
 
-                if self.block_drop_timer.elapsed() {
-                    self.drop_block();
-                    self.block_drop_timer.reset();
-                }
+                // Drop the current block if it needs dropping
+                self.drop_current_block();
             }
             Event::Input(ref input_event) => {
                 self.handle_input(input_event);
@@ -45,8 +44,15 @@ impl Game {
         true
     }
 
-    fn drop_block(&mut self) {
-        self.rec_y = self.rec_y + 10.0;
+    fn update_time(&mut self, delta: f64) {
+        self.time.set(self.time.get() + delta);
+    }
+
+    fn drop_current_block(&mut self) {
+        if self.block_drop_timer.elapsed() {
+            self.rec_y = self.rec_y + 10.0;
+            self.block_drop_timer.reset();
+        }
     }
 
     fn handle_input(&mut self, input: &Input) {
