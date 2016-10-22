@@ -19,9 +19,6 @@ impl Grid {
     pub fn render<G>(&self, context: Context, gfx: &mut G, e: &Event)
         where G: Graphics
     {
-        let x = GRID_OFFSET;
-        let y = GRID_OFFSET;
-
         for mut y in 2..22 {
             for mut x in 0..10 {
                 let adjusted_y = y - 2;
