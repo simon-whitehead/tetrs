@@ -56,7 +56,7 @@ impl Tetromino {
 
     pub fn move_right(&mut self, right_side: u32) {
         let right = self.get_rightmost_block_index();
-        if right < right_side as i32 - 1 {
+        if self.x + right < right_side as i32 - 1 {
             self.x = self.x + 1;
         }
     }
@@ -73,6 +73,8 @@ impl Tetromino {
                 }
             }
         }
+
+        println!("Found rightmost: {}", rightmost);
 
         rightmost as i32
     }
