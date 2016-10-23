@@ -34,10 +34,10 @@ pub struct Tetromino {
 pub struct TetrominoShape(Shape, [[Option<Block>; 4]; 4]);
 
 impl Tetromino {
-    pub fn new(shape: TetrominoShape) -> Tetromino {
+    pub fn new(shape: TetrominoShape, config: &Config) -> Tetromino {
         Tetromino {
-            x: 0.0,
-            y: 0.0,
+            x: (config.grid_size.0 as f64 / 2.0) - 2.0,
+            y: -2.0,
             shape: shape.0,
             blocks: shape.1,
             direction: Direction::North,
@@ -68,9 +68,9 @@ impl TetrominoFactory {
         TetrominoFactory { shapes: shapes }
     }
 
-    pub fn create(&self) -> Tetromino {
+    pub fn create(&self, config: &Config) -> Tetromino {
         let shape = Self::create_O();
-        Tetromino::new(TetrominoShape(shape.0, shape.1))
+        Tetromino::new(TetrominoShape(shape.0, shape.1), &config)
     }
 
     fn create_I() -> (Shape, [[Option<Block>; 4]; 4]) {
@@ -85,7 +85,7 @@ impl TetrominoFactory {
     }
 
     fn create_J() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let j_color = [0.0, 1.0, 1.0, 1.0];
+        let j_color = [0.0, 0.0, 1.0, 1.0];
         let j = Some(Block::new(j_color));
 
         (Shape::J,
@@ -96,7 +96,7 @@ impl TetrominoFactory {
     }
 
     fn create_L() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let l_color = [0.0, 1.0, 1.0, 1.0];
+        let l_color = [0.8, 0.5, 0.0, 1.0];
         let l = Some(Block::new(l_color));
 
         (Shape::L,
@@ -107,7 +107,7 @@ impl TetrominoFactory {
     }
 
     fn create_O() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let o_color = [0.0, 1.0, 1.0, 1.0];
+        let o_color = [1.0, 1.0, 0.0, 1.0];
         let o = Some(Block::new(o_color));
 
         (Shape::O,
@@ -118,7 +118,7 @@ impl TetrominoFactory {
     }
 
     fn create_S() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let s_color = [0.0, 1.0, 1.0, 1.0];
+        let s_color = [0.0, 1.0, 0.0, 1.0];
         let s = Some(Block::new(s_color));
 
         (Shape::S,
@@ -129,7 +129,7 @@ impl TetrominoFactory {
     }
 
     fn create_T() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let t_color = [0.0, 1.0, 1.0, 1.0];
+        let t_color = [1.0, 0.4, 0.7, 1.0];
         let t = Some(Block::new(t_color));
 
         (Shape::T,
@@ -140,7 +140,7 @@ impl TetrominoFactory {
     }
 
     fn create_Z() -> (Shape, [[Option<Block>; 4]; 4]) {
-        let z_color = [0.0, 1.0, 1.0, 1.0];
+        let z_color = [1.0, 0.0, 0.0, 1.0];
         let z = Some(Block::new(z_color));
 
         (Shape::Z,

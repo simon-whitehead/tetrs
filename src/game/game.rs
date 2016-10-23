@@ -23,16 +23,19 @@ impl Game {
         let time = RcCell!(0.0);
         let factory = TetrominoFactory::new();
         let config = ConfigBuilder::new()
+            .grid_size((10, 22))
             .grid_offset(10.0)
             .tile_size(29.0)
             .build();
+
+        let tetromino = factory.create(&config);
 
         Game {
             time: time.clone(),
             config: config,
             grid: Grid::new(),
             block_drop_timer: Timer::new(0.5, time.clone()),
-            tetromino: factory.create(),
+            tetromino: tetromino,
             tetromino_factory: factory,
         }
     }
