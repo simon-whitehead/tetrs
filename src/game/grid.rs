@@ -1,7 +1,7 @@
 
 use piston_window::*;
 
-use ::engine::GameWindow;
+use ::game::window::GameWindow;
 use ::game::block::Block;
 
 const GRID_OFFSET: f64 = 20.0;

@@ -3,9 +3,9 @@ use std::rc::Rc;
 
 use piston_window::*;
 
-use ::engine::{GameWindow, Timer, TimerTickResult};
-
 use ::game::grid::Grid;
+use ::game::window::GameWindow;
+use ::game::timer::{Timer, TimerTickResult};
 
 pub struct Game {
     time: Rc<Cell<f64>>,
