@@ -49,7 +49,8 @@ impl Tetromino {
     }
 
     pub fn move_left(&mut self) {
-        if self.x >= 0 {
+        let left = self.get_leftmost_block_index();
+        if self.x + left > 0 {
             self.x = self.x - 1;
         }
     }
@@ -61,22 +62,28 @@ impl Tetromino {
         }
     }
 
-    fn get_rightmost_block_index(&self) -> i32 {
-        let mut rightmost = 0;
-
-        for x in (0..4).rev() {
-            for y in (0..4).rev() {
+    fn get_leftmost_block_index(&self) -> i32 {
+        for x in (0..4) {
+            for y in (0..4) {
                 if let Some(ref block) = self.blocks[y][x] {
-                    if x > rightmost {
-                        rightmost = x;
-                    }
+                    return x as i32;
                 }
             }
         }
 
-        println!("Found rightmost: {}", rightmost);
+        0
+    }
 
-        rightmost as i32
+    fn get_rightmost_block_index(&self) -> i32 {
+        for x in (0..4).rev() {
+            for y in (0..4).rev() {
+                if let Some(ref block) = self.blocks[y][x] {
+                    return x as i32;
+                }
+            }
+        }
+
+        3
     }
 }
 
@@ -100,7 +107,7 @@ impl TetrominoFactory {
     }
 
     pub fn create(&self, config: &Config) -> Tetromino {
-        let shape = Self::create_O();
+        let shape = Self::create_S();
         Tetromino::new(TetrominoShape(shape.0, shape.1), &config)
     }
 
