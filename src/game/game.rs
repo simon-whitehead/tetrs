@@ -76,8 +76,8 @@ impl Game {
         if let Input::Press(ref button) = *input {
             match *button {
                 Button::Keyboard(Key::Space) => println!("Space pressed!"),
-                Button::Keyboard(Key::Left) => println!("Left pressed!"),
-                Button::Keyboard(Key::Right) => println!("Right pressed!"),
+                Button::Keyboard(Key::Left) => self.tetromino.move_left(),
+                Button::Keyboard(Key::Right) => self.tetromino.move_right(self.config.grid_size.0),
                 Button::Keyboard(Key::Down) => println!("Down pressed!"),
                 _ => (),
             }

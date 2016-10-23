@@ -24,8 +24,8 @@ pub enum Direction {
 
 #[derive(Copy, Clone)]
 pub struct Tetromino {
-    pub x: f64,
-    pub y: f64,
+    pub x: i32,
+    pub y: i32,
     pub blocks: [[Option<Block>; 4]; 4],
     shape: Shape,
     direction: Direction,
@@ -36,8 +36,8 @@ pub struct TetrominoShape(Shape, [[Option<Block>; 4]; 4]);
 impl Tetromino {
     pub fn new(shape: TetrominoShape, config: &Config) -> Tetromino {
         Tetromino {
-            x: (config.grid_size.0 as f64 / 2.0) - 2.0,
-            y: -2.0,
+            x: (config.grid_size.0 as i32 / 2) - 2,
+            y: 0,
             shape: shape.0,
             blocks: shape.1,
             direction: Direction::North,
@@ -45,7 +45,36 @@ impl Tetromino {
     }
 
     pub fn drop_down(&mut self) {
-        self.y = self.y + 1.0;
+        self.y = self.y + 1;
+    }
+
+    pub fn move_left(&mut self) {
+        if self.x >= 0 {
+            self.x = self.x - 1;
+        }
+    }
+
+    pub fn move_right(&mut self, right_side: u32) {
+        let right = self.get_rightmost_block_index();
+        if right < right_side as i32 - 1 {
+            self.x = self.x + 1;
+        }
+    }
+
+    fn get_rightmost_block_index(&self) -> i32 {
+        let mut rightmost = 0;
+
+        for x in (0..4).rev() {
+            for y in (0..4).rev() {
+                if let Some(ref block) = self.blocks[y][x] {
+                    if x > rightmost {
+                        rightmost = x;
+                    }
+                }
+            }
+        }
+
+        rightmost as i32
     }
 }
 
