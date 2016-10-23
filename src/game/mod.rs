@@ -2,8 +2,10 @@
 mod macros;
 
 mod block;
+mod config;
 mod game;
 mod grid;
+mod tetromino;
 mod timer;
 mod window;
 

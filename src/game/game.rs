@@ -3,30 +3,37 @@ use std::rc::Rc;
 
 use piston_window::*;
 
+use ::game::config::{Config, ConfigBuilder};
 use ::game::grid::Grid;
-use ::game::window::GameWindow;
+use ::game::tetromino::{Tetromino, TetrominoFactory};
 use ::game::timer::{Timer, TimerTickResult};
+use ::game::window::GameWindow;
 
 pub struct Game {
     time: Rc<Cell<f64>>,
+    config: Config,
     grid: Grid,
-    rec_y: f64,
-    next_block_move: f64,
-    next_block_move_time: f64,
     block_drop_timer: Timer,
+    tetromino: Tetromino,
+    tetromino_factory: TetrominoFactory,
 }
 
 impl Game {
     pub fn new() -> Game {
         let time = RcCell!(0.0);
+        let factory = TetrominoFactory::new();
+        let config = ConfigBuilder::new()
+            .grid_offset(10.0)
+            .tile_size(29.0)
+            .build();
 
         Game {
             time: time.clone(),
+            config: config,
             grid: Grid::new(),
-            rec_y: 20.0,
-            next_block_move: 1.0,
-            next_block_move_time: 0.5,
             block_drop_timer: Timer::new(0.5, time.clone()),
+            tetromino: factory.create(),
+            tetromino_factory: factory,
         }
     }
 
@@ -38,6 +45,9 @@ impl Game {
 
                 // Drop the current block if it needs dropping
                 self.drop_current_block();
+
+                // Apply the currently active tetromino into the grid
+                self.grid.apply_tetromino(&self.tetromino);
             }
             Event::Input(ref input_event) => {
                 self.handle_input(input_event);
@@ -54,7 +64,7 @@ impl Game {
 
     fn drop_current_block(&mut self) {
         if self.block_drop_timer.elapsed() {
-            self.rec_y = self.rec_y + 10.0;
+            self.tetromino.drop_down();
             self.block_drop_timer.reset();
         }
     }
@@ -71,21 +81,11 @@ impl Game {
         }
     }
 
-    fn drop_active_block(&mut self) {
-        // Move the active block down if its been longer than the wait time
-        self.rec_y = self.rec_y + 50.0;
-    }
-
     pub fn render(&self, window: &mut GameWindow, e: &Event) {
         window.draw_2d(e, |c, g| {
             clear([1.0, 1.0, 1.0, 1.0], g);
 
-            self.grid.render(c, g, &e);
-
-            rectangle([1.0, 0.0, 0.0, 1.0], // red
-                      [20.0, self.rec_y, 20.0, 20.0], // rectangle
-                      c.transform,
-                      g);
+            self.grid.render(&self.config, c, g, &e);
         });
     }
 }
