@@ -55,6 +55,27 @@ impl Grid {
         }
     }
 
+    pub fn hit_test(&self, tetromino: &Tetromino) -> bool {
+        for y in 0..4 {
+            for x in 0..4 {
+                if let Some(ref block) = tetromino.blocks[y][x] {
+                    let x = (tetromino.x + x as i32) as usize;
+                    let y = (tetromino.y + y as i32) as usize;
+
+                    if x >= 10 || y >= 22 {
+                        continue;
+                    }
+
+                    if let Some(ref block) = self.boxes[y][x] {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
+    }
+
     pub fn render<G>(&self, config: &Config, context: Context, gfx: &mut G, e: &Event)
         where G: Graphics
     {

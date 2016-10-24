@@ -46,13 +46,17 @@ impl Tetromino {
 
     pub fn drop_down(&mut self, config: &Config) -> bool {
         let bottom = self.get_bottom_block_index();
-        
+
         if self.y + bottom < config.grid_size.1 as i32 - 1 {
             self.y = self.y + 1;
             true
         } else {
             false
         }
+    }
+
+    pub fn move_up(&mut self) {
+        self.y = self.y - 1;
     }
 
     pub fn move_left(&mut self) {

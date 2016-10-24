@@ -3,11 +3,11 @@ use std::rc::Rc;
 
 use piston_window::*;
 
-use ::game::config::{Config, ConfigBuilder};
-use ::game::grid::Grid;
-use ::game::tetromino::{Tetromino, TetrominoFactory};
-use ::game::timer::{Timer, TimerTickResult};
-use ::game::window::GameWindow;
+use game::config::{Config, ConfigBuilder};
+use game::grid::Grid;
+use game::tetromino::{Tetromino, TetrominoFactory};
+use game::timer::{Timer, TimerTickResult};
+use game::window::GameWindow;
 
 pub struct Game {
     time: Rc<Cell<f64>>,
@@ -70,6 +70,13 @@ impl Game {
             if !self.tetromino.drop_down(&self.config) {
                 self.grid.store_tetromino(&self.tetromino);
                 self.tetromino = self.tetromino_factory.create(&self.config);
+            } else {
+                if self.grid.hit_test(&self.tetromino) {
+                    self.tetromino.move_up();
+                    self.grid.store_tetromino(&self.tetromino);
+                    self.tetromino = self.tetromino_factory.create(&self.config);
+                    self.block_drop_timer.reset();
+                }
             }
 
             self.block_drop_timer.reset();
@@ -84,6 +91,12 @@ impl Game {
                 Button::Keyboard(Key::Right) => self.tetromino.move_right(self.config.grid_size.0),
                 Button::Keyboard(Key::Down) => {
                     if self.tetromino.drop_down(&self.config) {
+                        self.block_drop_timer.reset();
+                    }
+                    if self.grid.hit_test(&self.tetromino) {
+                        self.tetromino.move_up();
+                        self.grid.store_tetromino(&self.tetromino);
+                        self.tetromino = self.tetromino_factory.create(&self.config);
                         self.block_drop_timer.reset();
                     }
                 }

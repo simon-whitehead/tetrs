@@ -2,7 +2,7 @@
 mod macros;
 
 mod block;
-mod config;
+pub mod config;
 mod game;
 mod grid;
 mod tetromino;
