@@ -82,7 +82,11 @@ impl Game {
                 Button::Keyboard(Key::Space) => println!("Space pressed!"),
                 Button::Keyboard(Key::Left) => self.tetromino.move_left(),
                 Button::Keyboard(Key::Right) => self.tetromino.move_right(self.config.grid_size.0),
-                Button::Keyboard(Key::Down) => println!("Down pressed!"),
+                Button::Keyboard(Key::Down) => {
+                    if self.tetromino.drop_down(&self.config) {
+                        self.block_drop_timer.reset();
+                    }
+                }
                 _ => (),
             }
         }
