@@ -66,6 +66,7 @@ impl Game {
     }
 
     fn drop_current_block(&mut self) {
+        // TODO: Reduce nesting in here
         if self.block_drop_timer.elapsed() {
             if !self.tetromino.drop_down(&self.config) {
                 self.grid.store_tetromino(&self.tetromino);
