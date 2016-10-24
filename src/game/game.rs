@@ -67,7 +67,11 @@ impl Game {
 
     fn drop_current_block(&mut self) {
         if self.block_drop_timer.elapsed() {
-            self.tetromino.drop_down();
+            if !self.tetromino.drop_down(&self.config) {
+                self.grid.store_tetromino(&self.tetromino);
+                self.tetromino = self.tetromino_factory.create(&self.config);
+            }
+
             self.block_drop_timer.reset();
         }
     }
