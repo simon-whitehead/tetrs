@@ -44,15 +44,29 @@ impl Tetromino {
         }
     }
 
-    pub fn drop_down(&mut self, config: &Config) -> bool {
-        let bottom = self.get_bottom_block_index();
+    pub fn can_drop_down(&self, grid: &[[Option<Block>; 10]; 22]) -> bool {
+        for y in 0..4 {
+            for x in 0..4 {
+                if let Some(ref block) = self.blocks[y][x] {
+                    let x = (self.x + x as i32) as usize;
+                    let y = (self.y + y as i32) as usize;
 
-        if self.y + bottom < config.grid_size.1 as i32 - 1 {
-            self.y = self.y + 1;
-            true
-        } else {
-            false
+                    if y > 20 {
+                        return false;
+                    }
+
+                    if let Some(ref block) = grid[y + 1][x] {
+                        return false;
+                    }
+                }
+            }
         }
+
+        true
+    }
+
+    pub fn drop_down(&mut self) {
+        self.y = self.y + 1;
     }
 
     pub fn move_up(&mut self) {
@@ -97,16 +111,16 @@ impl Tetromino {
         3
     }
 
-    fn get_bottom_block_index(&self) -> i32 {
+    fn get_bottom_block_position(&self) -> (i32, i32) {
         for y in (0..4).rev() {
             for x in (0..4).rev() {
                 if let Some(ref block) = self.blocks[y][x] {
-                    return x as i32;
+                    return (x as i32, y as i32);
                 }
             }
         }
 
-        3
+        (3, 3)
     }
 }
 

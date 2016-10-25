@@ -47,7 +47,7 @@ impl Game {
                 self.update_time(update.dt);
 
                 // Drop the current block if it needs dropping
-                self.drop_current_block();
+                self.drop_current_block(None);
 
                 // Apply the currently active tetromino into the grid
                 self.grid.apply_tetromino(&self.tetromino);
@@ -61,25 +61,24 @@ impl Game {
         true
     }
 
+    /// Increments the global time
     fn update_time(&mut self, delta: f64) {
         self.time.set(self.time.get() + delta);
     }
 
-    fn drop_current_block(&mut self) {
-        // TODO: Reduce nesting in here
-        if self.block_drop_timer.elapsed() {
-            if !self.tetromino.drop_down(&self.config) {
-                self.grid.store_tetromino(&self.tetromino);
-                self.tetromino = self.tetromino_factory.create(&self.config);
-            } else {
-                if self.grid.hit_test(&self.tetromino) {
-                    self.tetromino.move_up();
-                    self.grid.store_tetromino(&self.tetromino);
-                    self.tetromino = self.tetromino_factory.create(&self.config);
-                    self.block_drop_timer.reset();
-                }
+    fn drop_current_block<O>(&mut self, force_drop: O)
+        where O: Into<Option<bool>>
+    {
+        // If we can drop, check if we are ready and drop the active tetromino
+        if self.tetromino.can_drop_down(&self.grid.boxes) {
+            if self.block_drop_timer.elapsed() || force_drop.into().is_some() {
+                self.tetromino.drop_down();
+                self.block_drop_timer.reset();
             }
-
+        } else {
+            // Otherwise, store the tetromino in the grid and create a new tetromino
+            self.grid.store_tetromino(&self.tetromino);
+            self.tetromino = self.tetromino_factory.create(&self.config);
             self.block_drop_timer.reset();
         }
     }
@@ -91,15 +90,7 @@ impl Game {
                 Button::Keyboard(Key::Left) => self.tetromino.move_left(),
                 Button::Keyboard(Key::Right) => self.tetromino.move_right(self.config.grid_size.0),
                 Button::Keyboard(Key::Down) => {
-                    if self.tetromino.drop_down(&self.config) {
-                        self.block_drop_timer.reset();
-                    }
-                    if self.grid.hit_test(&self.tetromino) {
-                        self.tetromino.move_up();
-                        self.grid.store_tetromino(&self.tetromino);
-                        self.tetromino = self.tetromino_factory.create(&self.config);
-                        self.block_drop_timer.reset();
-                    }
+                    self.drop_current_block(true);
                 }
                 _ => (),
             }
