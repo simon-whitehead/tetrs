@@ -50,26 +50,39 @@ impl Tetromino {
         }
     }
 
+    /// Checks if the current block can move in a specific
+    /// direction.
     pub fn can_move(&self, direction: Direction, grid: &[[Option<Block>; 10]; 22]) -> MoveResult {
+
+        // Determine the direction on each axis we're attempting to move
         let mut y_dir = Self::get_y_direction(direction) as i32;
         let mut x_dir = Self::get_x_direction(direction) as i32;
 
+        // Loop over each block of this tetromino and compare it
+        // to the offset within the grid where we want to move to
         for y in 0..4 {
             for x in 0..4 {
                 if let Some(ref block) = self.blocks[y][x] {
                     let x = ((self.x + x as i32) + x_dir) as isize;
                     let y = ((self.y + y as i32) + y_dir) as isize;
 
+                    // Check if we've hit the bottom
                     if y > 21 {
                         return MoveResult::Blocked;
                     }
 
+                    // Check if we're touching the edges
                     if x < 0 || x > 9 {
                         return MoveResult::Deny;
                     }
 
+                    // Otherwise check if we're smashing in to another block
                     if let Some(ref block) = grid[y as usize][x as usize] {
-                        return MoveResult::Blocked;
+                        // Deny left and right.. but block downwards
+                        match direction {
+                            Direction::East | Direction::West => return MoveResult::Deny,
+                            Direction::North | Direction::South => return MoveResult::Blocked,
+                        }
                     }
                 }
             }
@@ -131,7 +144,7 @@ impl TetrominoFactory {
     }
 
     pub fn create(&self, config: &Config) -> Tetromino {
-        let shape = Self::create_S();
+        let shape = Self::create_I();
         Tetromino::new(TetrominoShape(shape.0, shape.1), &config)
     }
 
