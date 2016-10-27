@@ -4,8 +4,9 @@ use std::rc::Rc;
 use piston_window::*;
 
 use game::config::{Config, ConfigBuilder};
+use game::factory::TetrominoFactory;
 use game::grid::Grid;
-use game::tetromino::{Direction, MoveResult, Tetromino, TetrominoFactory};
+use game::tetromino::{Direction, MoveResult, Tetromino};
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
 

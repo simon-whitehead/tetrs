@@ -3,6 +3,7 @@ mod macros;
 
 mod block;
 pub mod config;
+mod factory;
 mod game;
 mod grid;
 mod tetromino;
