@@ -4,17 +4,6 @@ use ::game::block::Block;
 use ::game::config::Config;
 
 #[derive(Copy, Clone)]
-pub enum Shape {
-    I,
-    J,
-    L,
-    O,
-    S,
-    T,
-    Z,
-}
-
-#[derive(Copy, Clone)]
 pub enum Direction {
     North,
     East,
@@ -33,19 +22,25 @@ pub struct Tetromino {
     pub x: i32,
     pub y: i32,
     pub blocks: [[Option<Block>; 4]; 4],
-    shape: Shape,
+    north: [[Option<Block>; 4]; 4],
+    east: [[Option<Block>; 4]; 4],
+    south: [[Option<Block>; 4]; 4],
+    west: [[Option<Block>; 4]; 4],
     direction: Direction,
 }
 
-pub struct TetrominoShape(Shape, [[Option<Block>; 4]; 4]);
+pub struct TetrominoShape([[Option<Block>; 4]; 4],[[Option<Block>; 4]; 4],[[Option<Block>; 4]; 4],[[Option<Block>; 4]; 4]);
 
 impl Tetromino {
     pub fn new(shape: TetrominoShape, config: &Config) -> Tetromino {
         Tetromino {
             x: (config.grid_size.0 as i32 / 2) - 2,
             y: 0,
-            shape: shape.0,
-            blocks: shape.1,
+            blocks: shape.0.clone(),
+            north: shape.0,
+            east: shape.1,
+            south: shape.2,
+            west: shape.3,
             direction: Direction::North,
         }
     }
@@ -125,7 +120,7 @@ impl Tetromino {
 }
 
 pub struct TetrominoFactory {
-    shapes: Vec<(Shape, [[Option<Block>; 4]; 4])>,
+    shapes: Vec<TetrominoShape>,
 }
 
 impl TetrominoFactory {
@@ -145,83 +140,223 @@ impl TetrominoFactory {
 
     pub fn create(&self, config: &Config) -> Tetromino {
         let shape = Self::create_I();
-        Tetromino::new(TetrominoShape(shape.0, shape.1), &config)
+        Tetromino::new(TetrominoShape(shape.0, shape.1, shape.2, shape.3), &config)
     }
 
-    fn create_I() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_I() -> TetrominoShape {
         let i_color = [0.0, 1.0, 1.0, 1.0];
         let i = Some(Block::new(i_color));
 
-        (Shape::I,
+        TetrominoShape(
+        // North
+         [[None, None, None, None],
+          [i.clone(), i.clone(), i.clone(), i.clone()],
+          [None, None, None, None],
+          [None, None, None, None]],
+          
+          // East
+         [[None, None, i.clone(), None],
+          [None, None, i.clone(), None],
+          [None, None, i.clone(), None],
+          [None, None, i.clone(), None]],
+
+          // South
+         [[None, None, None, None],
+          [None, None, None, None],
+          [i.clone(), i.clone(), i.clone(), i.clone()],
+          [None, None, None, None]],
+
+          // West
          [[None, i.clone(), None, None],
           [None, i.clone(), None, None],
           [None, i.clone(), None, None],
-          [None, i.clone(), None, None]])
+          [None, i.clone(), None, None]],
+        )
     }
 
-    fn create_J() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_J() -> TetrominoShape {
         let j_color = [0.0, 0.0, 1.0, 1.0];
         let j = Some(Block::new(j_color));
 
-        (Shape::J,
+        TetrominoShape(
+        // North
+         [[j.clone(), None, None, None],
+          [j.clone(), j.clone(), j.clone(), None],
+          [None, None, None, None],
+          [None, None, None, None]],
+          
+          // East
+         [[None, j.clone(), j.clone(), None],
+          [None, j.clone(), None, None],
+          [None, j.clone(), None, None],
+          [None, None, None, None]],
+
+          // South
+         [[None, None, None, None],
+          [j.clone(), j.clone(), j.clone(), None],
+          [None, None, j.clone(), None],
+          [None, None, None, None]],
+
+          // West
          [[None, j.clone(), None, None],
           [None, j.clone(), None, None],
           [j.clone(), j.clone(), None, None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+        )
     }
 
-    fn create_L() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_L() -> TetrominoShape {
         let l_color = [0.8, 0.5, 0.0, 1.0];
         let l = Some(Block::new(l_color));
 
-        (Shape::L,
+        TetrominoShape(
+        // North
+         [[None, None, l.clone(), None],
+          [l.clone(), l.clone(), l.clone(), None],
+          [None, None, None, None],
+          [None, None, None, None]],
+          
+          // East
          [[None, l.clone(), None, None],
           [None, l.clone(), None, None],
           [None, l.clone(), l.clone(), None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+
+          // South
+         [[None, None, None, None],
+          [l.clone(), l.clone(), l.clone(), None],
+          [l.clone(), None, None, None],
+          [None, None, None, None]],
+
+          // West
+         [[l.clone(), l.clone(), None, None],
+          [None, l.clone(), None, None],
+          [None, l.clone(), None, None],
+          [None, None, None, None]],
+        )
     }
 
-    fn create_O() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_O() -> TetrominoShape {
         let o_color = [1.0, 1.0, 0.0, 1.0];
         let o = Some(Block::new(o_color));
 
-        (Shape::O,
+        TetrominoShape(
+        // North
          [[None, o.clone(), o.clone(), None],
           [None, o.clone(), o.clone(), None],
           [None, None, None, None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+          
+          // East
+         [[None, o.clone(), o.clone(), None],
+          [None, o.clone(), o.clone(), None],
+          [None, None, None, None],
+          [None, None, None, None]],
+
+          // South
+         [[None, o.clone(), o.clone(), None],
+          [None, o.clone(), o.clone(), None],
+          [None, None, None, None],
+          [None, None, None, None]],
+
+          // West
+         [[None, o.clone(), o.clone(), None],
+          [None, o.clone(), o.clone(), None],
+          [None, None, None, None],
+          [None, None, None, None]],
+        )
     }
 
-    fn create_S() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_S() -> TetrominoShape {
         let s_color = [0.0, 1.0, 0.0, 1.0];
         let s = Some(Block::new(s_color));
 
-        (Shape::S,
+        TetrominoShape(
+        // North
          [[None, s.clone(), s.clone(), None],
           [s.clone(), s.clone(), None, None],
           [None, None, None, None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+          
+          // East
+         [[None, s.clone(), None, None],
+          [None, s.clone(), s.clone(), None],
+          [None, None, s.clone(), None],
+          [None, None, None, None]],
+
+          // South
+         [[None, None, None, None],
+          [None, s.clone(), s.clone(), None],
+          [s.clone(), s.clone(), None, None],
+          [None, None, None, None]],
+
+          // West
+         [[s.clone(), None, None, None],
+          [s.clone(), s.clone(), None, None],
+          [None, s.clone(), None, None],
+          [None, None, None, None]],
+        )
     }
 
-    fn create_T() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_T() -> TetrominoShape {
         let t_color = [1.0, 0.4, 0.7, 1.0];
         let t = Some(Block::new(t_color));
 
-        (Shape::T,
+        TetrominoShape(
+        // North
          [[None, t.clone(), None, None],
           [t.clone(), t.clone(), t.clone(), None],
           [None, None, None, None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+          
+          // East
+         [[None, t.clone(), None, None],
+          [None, t.clone(), t.clone(), None],
+          [None, t.clone(), None, None],
+          [None, None, None, None]],
+
+          // South
+         [[None, None, None, None],
+          [t.clone(), t.clone(), t.clone(), None],
+          [None, t.clone(), None, None],
+          [None, None, None, None]],
+
+          // West
+         [[None, t.clone(), None, None],
+          [t.clone(), t.clone(), None, None],
+          [None, t.clone(), None, None],
+          [None, None, None, None]],
+        )
     }
 
-    fn create_Z() -> (Shape, [[Option<Block>; 4]; 4]) {
+    fn create_Z() -> TetrominoShape {
         let z_color = [1.0, 0.0, 0.0, 1.0];
         let z = Some(Block::new(z_color));
 
-        (Shape::Z,
+        TetrominoShape(
+        // North
          [[z.clone(), z.clone(), None, None],
           [None, z.clone(), z.clone(), None],
           [None, None, None, None],
-          [None, None, None, None]])
+          [None, None, None, None]],
+          
+          // East
+         [[None, None, None, z.clone()],
+          [None, None, z.clone(), z.clone()],
+          [None, None, z.clone(), None],
+          [None, None, None, None]],
+
+          // South
+         [[None, None, None, None],
+          [z.clone(), z.clone(), None, None],
+          [None, z.clone(), z.clone(), None],
+          [None, None, None, None]],
+
+          // West
+         [[None, z.clone(), None, None],
+          [z.clone(), z.clone(), None, None],
+          [z.clone(), None, None, None],
+          [None, None, None, None]],
+        )
     }
 }
