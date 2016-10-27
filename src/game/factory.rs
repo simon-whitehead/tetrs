@@ -1,3 +1,4 @@
+use game::rand::{thread_rng, Rng};
 
 use game::block::Block;
 use game::config::Config;
@@ -23,7 +24,27 @@ impl TetrominoFactory {
     }
 
     pub fn create(&self, config: &Config) -> Tetromino {
-        let shape = Self::create_I();
+        let i_func = &Self::create_I;
+        let j_func = &Self::create_J;
+        let l_func = &Self::create_L;
+        let o_func = &Self::create_O;
+        let s_func = &Self::create_S;
+        let t_func = &Self::create_T;
+        let z_func = &Self::create_Z;
+
+        let mut functions: Vec<&Fn() -> TetrominoShape> =  Vec::new();
+        functions.push(i_func);
+        functions.push(j_func);
+        functions.push(l_func);
+        functions.push(o_func);
+        functions.push(s_func);
+        functions.push(t_func);
+        functions.push(z_func);
+
+        let random_number = thread_rng().gen_range(0, 6);
+
+        let shape = (*functions[random_number as usize])();
+        
         Tetromino::new(TetrominoShape(shape.0, shape.1, shape.2, shape.3), &config)
     }
 
