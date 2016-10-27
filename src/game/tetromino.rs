@@ -22,6 +22,12 @@ pub enum Direction {
     West,
 }
 
+pub enum MoveResult {
+    Allow,
+    Deny,
+    Blocked,
+}
+
 #[derive(Copy, Clone)]
 pub struct Tetromino {
     pub x: i32,
@@ -44,25 +50,48 @@ impl Tetromino {
         }
     }
 
-    pub fn can_drop_down(&self, grid: &[[Option<Block>; 10]; 22]) -> bool {
+    pub fn can_move(&self, direction: Direction, grid: &[[Option<Block>; 10]; 22]) -> MoveResult {
+        let mut y_dir = Self::get_y_direction(direction) as i32;
+        let mut x_dir = Self::get_x_direction(direction) as i32;
+
         for y in 0..4 {
             for x in 0..4 {
                 if let Some(ref block) = self.blocks[y][x] {
-                    let x = (self.x + x as i32) as usize;
-                    let y = (self.y + y as i32) as usize;
+                    let x = ((self.x + x as i32) + x_dir) as isize;
+                    let y = ((self.y + y as i32) + y_dir) as isize;
 
-                    if y > 20 {
-                        return false;
+                    if y > 21 {
+                        return MoveResult::Blocked;
                     }
 
-                    if let Some(ref block) = grid[y + 1][x] {
-                        return false;
+                    if x < 0 || x > 9 {
+                        return MoveResult::Deny;
+                    }
+
+                    if let Some(ref block) = grid[y as usize][x as usize] {
+                        return MoveResult::Blocked;
                     }
                 }
             }
         }
 
-        true
+        MoveResult::Allow
+    }
+
+    fn get_y_direction(direction: Direction) -> isize {
+        match direction {
+            Direction::North => -1,
+            Direction::South => 1,
+            _ => 0,
+        }
+    }
+
+    fn get_x_direction(direction: Direction) -> isize {
+        match direction {
+            Direction::East => 1,
+            Direction::West => -1,
+            _ => 0,
+        }
     }
 
     pub fn drop_down(&mut self) {
@@ -74,53 +103,11 @@ impl Tetromino {
     }
 
     pub fn move_left(&mut self) {
-        let left = self.get_leftmost_block_index();
-        if self.x + left > 0 {
-            self.x = self.x - 1;
-        }
+        self.x = self.x - 1;
     }
 
-    pub fn move_right(&mut self, right_side: u32) {
-        let right = self.get_rightmost_block_index();
-        if self.x + right < right_side as i32 - 1 {
-            self.x = self.x + 1;
-        }
-    }
-
-    fn get_leftmost_block_index(&self) -> i32 {
-        for x in (0..4) {
-            for y in (0..4) {
-                if let Some(ref block) = self.blocks[y][x] {
-                    return x as i32;
-                }
-            }
-        }
-
-        0
-    }
-
-    fn get_rightmost_block_index(&self) -> i32 {
-        for x in (0..4).rev() {
-            for y in (0..4).rev() {
-                if let Some(ref block) = self.blocks[y][x] {
-                    return x as i32;
-                }
-            }
-        }
-
-        3
-    }
-
-    fn get_bottom_block_position(&self) -> (i32, i32) {
-        for y in (0..4).rev() {
-            for x in (0..4).rev() {
-                if let Some(ref block) = self.blocks[y][x] {
-                    return (x as i32, y as i32);
-                }
-            }
-        }
-
-        (3, 3)
+    pub fn move_right(&mut self) {
+        self.x = self.x + 1;
     }
 }
 

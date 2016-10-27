@@ -5,7 +5,7 @@ use piston_window::*;
 
 use game::config::{Config, ConfigBuilder};
 use game::grid::Grid;
-use game::tetromino::{Tetromino, TetrominoFactory};
+use game::tetromino::{Direction, MoveResult, Tetromino, TetrominoFactory};
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
 
@@ -70,25 +70,45 @@ impl Game {
         where O: Into<Option<bool>>
     {
         // If we can drop, check if we are ready and drop the active tetromino
-        if self.tetromino.can_drop_down(&self.grid.boxes) {
-            if self.block_drop_timer.elapsed() || force_drop.into().is_some() {
-                self.tetromino.drop_down();
-                self.block_drop_timer.reset();
+        match self.tetromino.can_move(Direction::South, &self.grid.boxes) {
+            MoveResult::Allow => {
+                if self.block_drop_timer.elapsed() || force_drop.into().is_some() {
+                    self.tetromino.drop_down();
+                    self.block_drop_timer.reset();
+                }
             }
-        } else {
-            // Otherwise, store the tetromino in the grid and create a new tetromino
-            self.grid.store_tetromino(&self.tetromino);
-            self.tetromino = self.tetromino_factory.create(&self.config);
-            self.block_drop_timer.reset();
+            MoveResult::Blocked => {
+                // Otherwise, store the tetromino in the grid and create a new tetromino
+                self.new_tetromino();
+            }
+            _ => (),
         }
+    }
+
+    fn new_tetromino(&mut self) {
+        self.grid.store_tetromino(&self.tetromino);
+        self.tetromino = self.tetromino_factory.create(&self.config);
+        self.block_drop_timer.reset();
     }
 
     fn handle_input(&mut self, input: &Input) {
         if let Input::Press(ref button) = *input {
             match *button {
                 Button::Keyboard(Key::Space) => println!("Space pressed!"),
-                Button::Keyboard(Key::Left) => self.tetromino.move_left(),
-                Button::Keyboard(Key::Right) => self.tetromino.move_right(self.config.grid_size.0),
+                Button::Keyboard(Key::Left) => {
+                    match self.tetromino.can_move(Direction::West, &self.grid.boxes) {
+                        MoveResult::Allow => self.tetromino.move_left(),
+                        MoveResult::Blocked => self.new_tetromino(),
+                        _ => (),
+                    }
+                }
+                Button::Keyboard(Key::Right) => {
+                    match self.tetromino.can_move(Direction::East, &self.grid.boxes) {
+                        MoveResult::Allow => self.tetromino.move_right(),
+                        MoveResult::Blocked => self.new_tetromino(),
+                        _ => (),
+                    }
+                }
                 Button::Keyboard(Key::Down) => {
                     self.drop_current_block(true);
                 }
