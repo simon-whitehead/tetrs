@@ -18,6 +18,16 @@ pub enum MoveResult {
     Blocked,
 }
 
+pub enum Rotation {
+    Clockwise,
+    CounterClockwise,
+}
+
+pub enum RotationResult {
+    Allow,
+    Deny,
+}
+
 #[derive(Copy, Clone)]
 pub struct Tetromino {
     pub x: i32,
@@ -30,7 +40,10 @@ pub struct Tetromino {
     direction: Direction,
 }
 
-pub struct TetrominoShape(pub [[Option<Block>; 4]; 4], pub [[Option<Block>; 4]; 4], pub [[Option<Block>; 4]; 4], pub [[Option<Block>; 4]; 4]);
+pub struct TetrominoShape(pub [[Option<Block>; 4]; 4],
+                          pub [[Option<Block>; 4]; 4],
+                          pub [[Option<Block>; 4]; 4],
+                          pub [[Option<Block>; 4]; 4]);
 
 impl Tetromino {
     pub fn new(shape: TetrominoShape, config: &Config) -> Tetromino {
@@ -85,6 +98,84 @@ impl Tetromino {
         }
 
         MoveResult::Allow
+    }
+
+    /// Checks if the current tetromino can rotate in its given position
+    pub fn can_rotate(&self,
+                      rotation: Rotation,
+                      grid: &[[Option<Block>; 10]; 22])
+                      -> RotationResult {
+
+        let new_dir = self.get_rotated_position(rotation);
+        let desired_blocks = self.get_blocks_for_direction(new_dir);
+
+        // Loop over each block of this tetromino and compare it
+        // to the offset within the grid where we want to move to
+        for y in 0..4 {
+            for x in 0..4 {
+                if let Some(ref block) = desired_blocks[y][x] {
+                    let x = (self.x + x as i32) as isize;
+                    let y = (self.y + y as i32) as isize;
+
+                    // Check if we will hit the bottom
+                    if y > 21 {
+                        return RotationResult::Deny;
+                    }
+
+                    // Check if we might hit the edge
+                    if x < 0 || x > 9 {
+                        return RotationResult::Deny;
+                    }
+
+                    // Otherwise check if we're smashing in to another block
+                    if let Some(ref block) = grid[y as usize][x as usize] {
+                        // Deny left and right.. but block downwards
+                        return RotationResult::Deny;
+                    }
+                }
+            }
+        }
+
+        RotationResult::Allow
+    }
+
+    // Determines the direction we want to be facing this Tetromino, based
+    // on its current direction and the direction the player attempted to
+    // turn.
+    fn get_rotated_position(&self, direction: Rotation) -> Direction {
+        match direction {
+            Rotation::Clockwise => {
+                match self.direction {
+                    Direction::North => Direction::East,
+                    Direction::East => Direction::South,
+                    Direction::South => Direction::West,
+                    Direction::West => Direction::North,
+                }
+            }
+            Rotation::CounterClockwise => {
+                match self.direction {
+                    Direction::North => Direction::West,
+                    Direction::West => Direction::South,
+                    Direction::South => Direction::East,
+                    Direction::East => Direction::North,
+                }
+            }
+        }
+    }
+
+    pub fn rotate(&mut self, rotation: Rotation) {
+        let new_dir = self.get_rotated_position(rotation);
+        self.blocks = self.get_blocks_for_direction(new_dir);
+        self.direction = new_dir;
+    }
+
+    fn get_blocks_for_direction(&self, direction: Direction) -> [[Option<Block>; 4]; 4] {
+        match direction {
+            Direction::North => self.north.clone(),
+            Direction::East => self.east.clone(),
+            Direction::South => self.south.clone(),
+            Direction::West => self.west.clone(),
+        }
     }
 
     fn get_y_direction(direction: Direction) -> isize {

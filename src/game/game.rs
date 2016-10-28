@@ -6,7 +6,7 @@ use piston_window::*;
 use game::config::{Config, ConfigBuilder};
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
-use game::tetromino::{Direction, MoveResult, Tetromino};
+use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino};
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
 
@@ -95,7 +95,18 @@ impl Game {
     fn handle_input(&mut self, input: &Input) {
         if let Input::Press(ref button) = *input {
             match *button {
-                Button::Keyboard(Key::Space) => println!("Space pressed!"),
+                Button::Keyboard(Key::Z) => {
+                    match self.tetromino.can_rotate(Rotation::CounterClockwise, &self.grid.boxes) {
+                        RotationResult::Allow => self.tetromino.rotate(Rotation::CounterClockwise),
+                        _ => (),
+                    }
+                }
+                Button::Keyboard(Key::X) => {
+                    match self.tetromino.can_rotate(Rotation::Clockwise, &self.grid.boxes) {
+                        RotationResult::Allow => self.tetromino.rotate(Rotation::Clockwise),
+                        _ => (),
+                    }
+                }
                 Button::Keyboard(Key::Left) => {
                     match self.tetromino.can_move(Direction::West, &self.grid.boxes) {
                         MoveResult::Allow => self.tetromino.move_left(),
