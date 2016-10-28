@@ -66,27 +66,24 @@ impl Grid {
 
                 let adjusted_y = y - 2;
                 if let Some(ref block) = self.overlay[y][x] {
-                    rectangle(block.color,
-                              [x as f64 * tile_size + grid_offset,
-                               adjusted_y as f64 * tile_size + grid_offset,
-                               tile_size as f64,
-                               tile_size as f64],
-                              context.transform,
-                              gfx);
+                    block.render(x, y, &config, context, gfx, e);
                     continue;
                 }
 
-                let color = match self.boxes[y][x] {
-                    Some(ref block) => block.color,
-                    None => [0.0, 0.0, 0.0, 1.0],
+                match self.boxes[y][x] {
+                    Some(ref block) => {
+                        block.render(x, y, &config, context, gfx, e);
+                    }
+                    None => {
+                        rectangle([0.0, 0.0, 0.0, 1.0],
+                                  [x as f64 * tile_size + grid_offset,
+                                   adjusted_y as f64 * tile_size + grid_offset,
+                                   tile_size as f64,
+                                   tile_size as f64],
+                                  context.transform,
+                                  gfx);
+                    }
                 };
-                rectangle(color,
-                          [x as f64 * tile_size + grid_offset,
-                           adjusted_y as f64 * tile_size + grid_offset,
-                           tile_size as f64,
-                           tile_size as f64],
-                          context.transform,
-                          gfx);
             }
         }
     }
