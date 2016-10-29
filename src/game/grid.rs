@@ -55,6 +55,28 @@ impl Grid {
         }
     }
 
+    /// Removes complete lines from the grid
+    pub fn remove_complete_lines(&mut self, config: &Config) {
+        // Pointer to where we're currently writing lines
+        let mut y_mut = (config.grid_size.1 - 1) as usize;
+
+        for y in (0..config.grid_size.1).rev() {
+            // If every column in this row has a block,
+            // we consider it "complete"
+            let complete = self.boxes[y as usize].iter().all(|block| block.is_some());
+
+            // If this is not a complete line, copy it
+            // into the currently pointed line
+            if !complete {
+                self.boxes[y_mut] = self.boxes[y as usize];
+                y_mut = y_mut - 1;
+                if y_mut == 0 {
+                    break;
+                }
+            }
+        }
+    }
+
     pub fn render<G>(&self, config: &Config, context: Context, gfx: &mut G, e: &Event)
         where G: Graphics
     {

@@ -87,6 +87,7 @@ impl Game {
                     // Store the tetromino in the grid and create a new tetromino
                     self.new_tetromino();
                     self.lockstep_timer.stop();
+                    self.grid.remove_complete_lines(&self.config);
                 }
             }
             _ => (),
