@@ -14,7 +14,7 @@ pub struct Game {
     time: Rc<Cell<f64>>,
     config: Config,
     grid: Grid,
-    block_drop_timer: Timer,
+    drop_timer: Timer,
     tetromino: Tetromino,
     tetromino_factory: TetrominoFactory,
 }
@@ -35,7 +35,7 @@ impl Game {
             time: time.clone(),
             config: config,
             grid: Grid::new(),
-            block_drop_timer: Timer::new(0.5, time.clone()),
+            drop_timer: Timer::new(0.5, time.clone()),
             tetromino: tetromino,
             tetromino_factory: factory,
         }
@@ -73,9 +73,9 @@ impl Game {
         // If we can drop, check if we are ready and drop the active tetromino
         match self.tetromino.can_move(Direction::South, &self.grid.boxes) {
             MoveResult::Allow => {
-                if self.block_drop_timer.elapsed() || force_drop.into().is_some() {
+                if self.drop_timer.elapsed() || force_drop.into().is_some() {
                     self.tetromino.drop_down();
-                    self.block_drop_timer.reset();
+                    self.drop_timer.reset();
                 }
             }
             MoveResult::Blocked => {
@@ -89,7 +89,7 @@ impl Game {
     fn new_tetromino(&mut self) {
         self.grid.store_tetromino(&self.tetromino);
         self.tetromino = self.tetromino_factory.create(&self.config);
-        self.block_drop_timer.reset();
+        self.drop_timer.reset();
     }
 
     fn handle_input(&mut self, input: &Input) {
