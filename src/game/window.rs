@@ -6,7 +6,7 @@ use piston_window::*;
 pub struct GameWindow {
     width: u32,
     height: u32,
-    piston_window: PistonWindow,
+    pub piston_window: PistonWindow,
 }
 
 impl GameWindow {

@@ -1,8 +1,11 @@
 use std::cell::Cell;
 use std::rc::Rc;
 
+use gfx_device_gl::Factory;
 use piston_window::*;
+use piston_window::character::CharacterCache;
 
+use game::asset_factory::AssetFactory;
 use game::config::{Config, ConfigBuilder};
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
@@ -13,6 +16,7 @@ use game::window::GameWindow;
 pub struct Game {
     time: Rc<Cell<f64>>,
     config: Config,
+    asset_factory: AssetFactory,
     grid: Grid,
     lockstep_timer: Timer,
     drop_timer: Timer,
@@ -21,7 +25,7 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new() -> Game {
+    pub fn new(gfx_factory: Factory) -> Game {
         let time = RcCell!(0.0);
         let factory = TetrominoFactory::new();
         let config = ConfigBuilder::new()
@@ -35,6 +39,7 @@ impl Game {
         Game {
             time: time.clone(),
             config: config,
+            asset_factory: AssetFactory::new(gfx_factory),
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
             drop_timer: Timer::new(0.5, time.clone()),
@@ -136,11 +141,19 @@ impl Game {
         }
     }
 
-    pub fn render(&self, window: &mut GameWindow, e: &Event) {
+    pub fn render(&mut self, window: &mut GameWindow, e: &Event) {
         window.draw_2d(e, |c, g| {
             clear([1.0, 1.0, 1.0, 1.0], g);
 
             self.grid.render(&self.config, c, g, &e);
+            ::game::text::render("Sample text",
+                                 32,
+                                 10,
+                                 50,
+                                 [1.0, 1.0, 1.0, 1.0],
+                                 self.asset_factory.font.as_mut().unwrap(),
+                                 c,
+                                 g);
         });
     }
 }
