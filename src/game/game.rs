@@ -20,6 +20,8 @@ pub struct Game {
     grid: Grid,
     lockstep_timer: Timer,
     drop_timer: Timer,
+    score: u32,
+    score_label: ::game::text::Text,
     tetromino: Tetromino,
     tetromino_factory: TetrominoFactory,
 }
@@ -43,6 +45,8 @@ impl Game {
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
             drop_timer: Timer::new(0.5, time.clone()),
+            score: 0,
+            score_label: ::game::text::Text::new("Score: 0", 16, 320, 29, [0.0, 0.0, 0.0, 1.0]),
             tetromino: tetromino,
             tetromino_factory: factory,
         }
@@ -92,7 +96,9 @@ impl Game {
                     // Store the tetromino in the grid and create a new tetromino
                     self.new_tetromino();
                     self.lockstep_timer.stop();
-                    self.grid.remove_complete_lines(&self.config);
+                    let multiplier = self.grid.remove_complete_lines(&self.config);
+                    self.score = self.score + (100 * multiplier);
+                    self.score_label.set_text(format!("Score: {}", self.score));
                 }
             }
             _ => (),
@@ -146,14 +152,7 @@ impl Game {
             clear([1.0, 1.0, 1.0, 1.0], g);
 
             self.grid.render(&self.config, c, g, &e);
-            ::game::text::render("Sample text",
-                                 32,
-                                 10,
-                                 50,
-                                 [1.0, 1.0, 1.0, 1.0],
-                                 self.asset_factory.font.as_mut().unwrap(),
-                                 c,
-                                 g);
+            self.score_label.render(self.asset_factory.font.as_mut().unwrap(), c, g);
         });
     }
 }

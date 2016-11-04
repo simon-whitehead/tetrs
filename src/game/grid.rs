@@ -56,9 +56,10 @@ impl Grid {
     }
 
     /// Removes complete lines from the grid
-    pub fn remove_complete_lines(&mut self, config: &Config) {
+    pub fn remove_complete_lines(&mut self, config: &Config) -> u32 {
         // Pointer to where we're currently writing lines
         let mut y_mut = (config.grid_size.1 - 1) as usize;
+        let mut cleared_lines = 0;
 
         for y in (0..config.grid_size.1).rev() {
             // If every column in this row has a block,
@@ -73,8 +74,12 @@ impl Grid {
                 if y_mut == 0 {
                     break;
                 }
+            } else {
+                cleared_lines = cleared_lines + 1;
             }
         }
+
+        cleared_lines
     }
 
     pub fn render<G>(&self, config: &Config, context: Context, gfx: &mut G, e: &Event)
