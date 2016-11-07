@@ -33,7 +33,7 @@ impl Scene for Game {
     fn process(&mut self, e: &Event) -> SceneResult {
         match *e {
             Event::Update(update) => {
-                // Update the globa game time
+                // Update the global game time
                 self.update_time(update.dt);
 
                 // Drop the current block if it needs dropping
