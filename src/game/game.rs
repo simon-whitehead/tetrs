@@ -61,7 +61,7 @@ impl Game {
                 self.update_time(update.dt);
 
                 // Drop the current block if it needs dropping
-                self.drop_current_block(None);
+                self.move_down(None);
 
                 // Apply the currently active tetromino into the grid
                 self.grid.apply_tetromino(&self.tetromino);
@@ -80,7 +80,7 @@ impl Game {
         self.time.set(self.time.get() + delta);
     }
 
-    fn drop_current_block<O>(&mut self, force_drop: O)
+    fn move_down<O>(&mut self, force_drop: O)
         where O: Into<Option<bool>>
     {
         // If we can drop, check if we are ready and drop the active tetromino
@@ -93,20 +93,36 @@ impl Game {
                 }
             }
             MoveResult::Blocked => {
-                // If its blocked.. first check if our LockStep has elapsed
-                if self.lockstep_timer.elapsed() {
-                    // Store the tetromino in the grid and create a new tetromino
-                    self.new_tetromino();
-                    self.lockstep_timer.stop();
-                    let lines_cleared = self.grid.remove_complete_lines(&self.config);
-
-                    self.scoring_system.update_score(&mut self.score,
-                                                     ScoreMetaData {
-                                                         lines_cleared: lines_cleared,
-                                                     });
-                }
+                self.handle_blocked(None);
             }
             _ => (),
+        }
+    }
+
+    fn handle_blocked<O>(&mut self, force: O)
+        where O: Into<Option<bool>>
+    {
+        // If its blocked.. first check if our LockStep has elapsed
+        if self.lockstep_timer.elapsed() || force.into().is_some() {
+            // Store the tetromino in the grid and create a new tetromino
+            self.new_tetromino();
+            self.lockstep_timer.stop();
+            let lines_cleared = self.grid.remove_complete_lines(&self.config);
+
+            self.scoring_system.update_score(&mut self.score,
+                                             ScoreMetaData { lines_cleared: lines_cleared });
+        }
+    }
+
+    /// Drops a Tetromino straight down until it hits the lowest
+    /// possible point.
+    fn drop_tetromino(&mut self) {
+        loop {
+            if let MoveResult::Allow = self.tetromino.can_move(Direction::South, &self.grid.boxes) {
+                self.tetromino.drop_down();
+            } else {
+                break;
+            }
         }
     }
 
@@ -145,7 +161,12 @@ impl Game {
                     }
                 }
                 Button::Keyboard(Key::Down) => {
-                    self.drop_current_block(true);
+                    self.move_down(true);
+                }
+                Button::Keyboard(Key::Space) => {
+                    self.drop_tetromino();
+                    // Stop the lockstep timer straight away
+                    self.handle_blocked(true);
                 }
                 _ => (),
             }
