@@ -27,7 +27,7 @@ impl Block {
                      x: usize,
                      y: usize,
                      config: &Config,
-                     context: Context,
+                     context: &mut Context,
                      gfx: &mut G,
                      e: &Event)
         where G: Graphics

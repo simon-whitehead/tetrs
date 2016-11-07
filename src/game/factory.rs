@@ -5,26 +5,15 @@ use game::config::Config;
 use game::tetromino::*;
 
 pub struct TetrominoFactory {
-    shapes: Vec<TetrominoShape>,
 }
 
 impl TetrominoFactory {
     pub fn new() -> TetrominoFactory {
-        let mut shapes = vec![
-            Self::create_I(),
-            Self::create_J(),
-            Self::create_L(),
-            Self::create_O(),
-            Self::create_S(),
-            Self::create_T(),
-            Self::create_Z(),
-        ];
-
-        TetrominoFactory { shapes: shapes }
+        TetrominoFactory {}
     }
 
     pub fn create(&self, config: &Config) -> Tetromino {
-        let mut functions: Vec<fn() -> TetrominoShape> = Vec::new();
+        let mut functions: Vec<fn(f32) -> TetrominoShape> = Vec::new();
         functions.push(Self::create_I);
         functions.push(Self::create_J);
         functions.push(Self::create_L);
@@ -35,13 +24,32 @@ impl TetrominoFactory {
 
         let random_number = thread_rng().gen_range(0, 6);
 
-        let shape = (functions[random_number as usize])();
+        let shape = (functions[random_number as usize])(1.0);
+        let shadow = (functions[random_number as usize])(0.65);
 
-        Tetromino::new(TetrominoShape(shape.0, shape.1, shape.2, shape.3), &config)
+        let shape = TetrominoShape(shape.0, shape.1, shape.2, shape.3);
+        let shadow = TetrominoShape(shadow.0, shadow.1, shadow.2, shadow.3);
+
+        Tetromino::new(shape, shadow, &config)
     }
 
-    fn create_I() -> TetrominoShape {
-        let i_color = [0.0, 1.0, 1.0, 1.0];
+    fn create_blended_color(color: [f32; 3], opacity: f32) -> [f32; 4] {
+        // If we're opaque, just return it
+        if opacity >= 1.0 {
+            [color[0], color[1], color[2], 1.0]
+        } else {
+            // Otherwise, blend it in to black
+            let r = color[0] * (1.0 - opacity);
+            let g = color[1] * (1.0 - opacity);
+            let b = color[2] * (1.0 - opacity);
+
+            [r, g, b, 1.0]
+        }
+    }
+
+    fn create_I(opacity: f32) -> TetrominoShape {
+        let color = [0.0, 1.0, 1.0];
+        let i_color = Self::create_blended_color(color, opacity);
         let i = Some(Block::new(i_color));
 
         TetrominoShape(// North
@@ -69,8 +77,9 @@ impl TetrominoFactory {
                         [None, i.clone(), None, None]])
     }
 
-    fn create_J() -> TetrominoShape {
-        let j_color = [0.0, 0.0, 1.0, 1.0];
+    fn create_J(opacity: f32) -> TetrominoShape {
+        let color = [0.0, 0.0, 1.0];
+        let j_color = Self::create_blended_color(color, opacity);
         let j = Some(Block::new(j_color));
 
         TetrominoShape(// North
@@ -98,8 +107,9 @@ impl TetrominoFactory {
                         [None, None, None, None]])
     }
 
-    fn create_L() -> TetrominoShape {
-        let l_color = [0.8, 0.5, 0.0, 1.0];
+    fn create_L(opacity: f32) -> TetrominoShape {
+        let color = [0.8, 0.5, 0.0];
+        let l_color = Self::create_blended_color(color, opacity);
         let l = Some(Block::new(l_color));
 
         TetrominoShape(// North
@@ -127,8 +137,9 @@ impl TetrominoFactory {
                         [None, None, None, None]])
     }
 
-    fn create_O() -> TetrominoShape {
-        let o_color = [1.0, 1.0, 0.0, 1.0];
+    fn create_O(opacity: f32) -> TetrominoShape {
+        let color = [1.0, 1.0, 0.0];
+        let o_color = Self::create_blended_color(color, opacity);
         let o = Some(Block::new(o_color));
 
         TetrominoShape(// North
@@ -156,8 +167,9 @@ impl TetrominoFactory {
                         [None, None, None, None]])
     }
 
-    fn create_S() -> TetrominoShape {
-        let s_color = [0.0, 1.0, 0.0, 1.0];
+    fn create_S(opacity: f32) -> TetrominoShape {
+        let color = [0.0, 0.75, 0.0];
+        let s_color = Self::create_blended_color(color, opacity);
         let s = Some(Block::new(s_color));
 
         TetrominoShape(// North
@@ -185,8 +197,9 @@ impl TetrominoFactory {
                         [None, None, None, None]])
     }
 
-    fn create_T() -> TetrominoShape {
-        let t_color = [1.0, 0.4, 0.7, 1.0];
+    fn create_T(opacity: f32) -> TetrominoShape {
+        let color = [1.0, 0.4, 0.7];
+        let t_color = Self::create_blended_color(color, opacity);
         let t = Some(Block::new(t_color));
 
         TetrominoShape(// North
@@ -214,8 +227,9 @@ impl TetrominoFactory {
                         [None, None, None, None]])
     }
 
-    fn create_Z() -> TetrominoShape {
-        let z_color = [1.0, 0.0, 0.0, 1.0];
+    fn create_Z(opacity: f32) -> TetrominoShape {
+        let color = [1.0, 0.0, 0.0];
+        let z_color = Self::create_blended_color(color, opacity);
         let z = Some(Block::new(z_color));
 
         TetrominoShape(// North

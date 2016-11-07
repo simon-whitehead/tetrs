@@ -174,10 +174,10 @@ impl Game {
     }
 
     pub fn render(&mut self, window: &mut GameWindow, e: &Event) {
-        window.draw_2d(e, |c, g| {
+        window.draw_2d(e, |mut c, g| {
             clear([1.0, 1.0, 1.0, 1.0], g);
 
-            self.grid.render(&self.config, c, g, &e);
+            self.grid.render(&self.config, &mut c, g, &e);
             self.score.render(self.asset_factory.font.as_mut().unwrap(), c, g);
         });
     }

@@ -33,10 +33,15 @@ pub struct Tetromino {
     pub x: i32,
     pub y: i32,
     pub blocks: [[Option<Block>; 4]; 4],
+    pub shadow: [[Option<Block>; 4]; 4],
     north: [[Option<Block>; 4]; 4],
     east: [[Option<Block>; 4]; 4],
     south: [[Option<Block>; 4]; 4],
     west: [[Option<Block>; 4]; 4],
+    shadow_north: [[Option<Block>; 4]; 4],
+    shadow_east: [[Option<Block>; 4]; 4],
+    shadow_south: [[Option<Block>; 4]; 4],
+    shadow_west: [[Option<Block>; 4]; 4],
     direction: Direction,
 }
 
@@ -46,15 +51,20 @@ pub struct TetrominoShape(pub [[Option<Block>; 4]; 4],
                           pub [[Option<Block>; 4]; 4]);
 
 impl Tetromino {
-    pub fn new(shape: TetrominoShape, config: &Config) -> Tetromino {
+    pub fn new(shape: TetrominoShape, shadow: TetrominoShape, config: &Config) -> Tetromino {
         Tetromino {
             x: (config.grid_size.0 as i32 / 2) - 2,
             y: 0,
             blocks: shape.0.clone(),
+            shadow: shadow.0.clone(),
             north: shape.0,
             east: shape.1,
             south: shape.2,
             west: shape.3,
+            shadow_north: shadow.0,
+            shadow_east: shadow.1,
+            shadow_south: shadow.2,
+            shadow_west: shadow.3,
             direction: Direction::North,
         }
     }
@@ -107,7 +117,7 @@ impl Tetromino {
                       -> RotationResult {
 
         let new_dir = self.get_rotated_position(rotation);
-        let desired_blocks = self.get_blocks_for_direction(new_dir);
+        let desired_blocks = self.get_blocks_for_direction(new_dir, None);
 
         // Loop over each block of this tetromino and compare it
         // to the offset within the grid where we want to move to
@@ -139,6 +149,20 @@ impl Tetromino {
         RotationResult::Allow
     }
 
+    /// Tests a cloned Tetromino to find where this current Tetromino
+    /// will land
+    pub fn find_landing_xy(&self, grid: &[[Option<Block>; 10]; 22]) -> (i32, i32) {
+        let mut clone = self.clone();
+
+        loop {
+            if let MoveResult::Allow = clone.can_move(Direction::South, grid) {
+                clone.drop_down();
+            } else {
+                return (clone.x, clone.y);
+            }
+        }
+    }
+
     // Determines the direction we want to be facing this Tetromino, based
     // on its current direction and the direction the player attempted to
     // turn.
@@ -165,16 +189,33 @@ impl Tetromino {
 
     pub fn rotate(&mut self, rotation: Rotation) {
         let new_dir = self.get_rotated_position(rotation);
-        self.blocks = self.get_blocks_for_direction(new_dir);
+        self.blocks = self.get_blocks_for_direction(new_dir, None);
+        self.shadow = self.get_blocks_for_direction(new_dir, true);
         self.direction = new_dir;
     }
 
-    fn get_blocks_for_direction(&self, direction: Direction) -> [[Option<Block>; 4]; 4] {
-        match direction {
-            Direction::North => self.north.clone(),
-            Direction::East => self.east.clone(),
-            Direction::South => self.south.clone(),
-            Direction::West => self.west.clone(),
+    fn get_blocks_for_direction<O>(&self,
+                                   direction: Direction,
+                                   shadow: O)
+                                   -> [[Option<Block>; 4]; 4]
+        where O: Into<Option<bool>>
+    {
+        let s = shadow.into();
+        if s.is_some() && s.unwrap() {
+            match direction {
+                Direction::North => self.shadow_north.clone(),
+                Direction::East => self.shadow_east.clone(),
+                Direction::South => self.shadow_south.clone(),
+                Direction::West => self.shadow_west.clone(),
+
+            }
+        } else {
+            match direction {
+                Direction::North => self.north.clone(),
+                Direction::East => self.east.clone(),
+                Direction::South => self.south.clone(),
+                Direction::West => self.west.clone(),
+            }
         }
     }
 

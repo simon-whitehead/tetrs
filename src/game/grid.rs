@@ -34,6 +34,20 @@ impl Grid {
 
                     self.overlay[y][x] = Some(block.clone());
                 }
+
+                let (shadow_x, shadow_y) = tetromino.find_landing_xy(&self.boxes);
+
+                if let Some(ref shadow) = tetromino.shadow[y][x] {
+                    // Now apply the shadow
+                    let x = (shadow_x + x as i32) as usize;
+                    let y = (shadow_y + y as i32) as usize;
+
+                    if x >= 10 || y >= 22 {
+                        continue;
+                    }
+
+                    self.overlay[y][x] = Some(shadow.clone());
+                }
             }
         }
     }
@@ -82,7 +96,7 @@ impl Grid {
         cleared_lines
     }
 
-    pub fn render<G>(&self, config: &Config, context: Context, gfx: &mut G, e: &Event)
+    pub fn render<G>(&self, config: &Config, context: &mut Context, gfx: &mut G, e: &Event)
         where G: Graphics
     {
         let grid_offset = config.grid_offset;
