@@ -26,10 +26,26 @@ impl Score {
         where C: CharacterCache,
               G: Graphics<Texture = <C as CharacterCache>::Texture>
     {
-        let transform = context.transform.trans(self.location.0 as f64, self.location.1 as f64);
-        let text = format!("Score: {}", self.score);
+        let score_label_transform = context.transform
+            .trans(self.location.0 as f64, self.location.1 as f64);
 
-        ::piston_window::Text::new_color(self.color, self.font_size)
-            .draw(&text[..], cache, &context.draw_state, transform, gfx);
+        let score_number_transform = context.transform
+            .trans(self.location.0 as f64,
+                   self.location.1 + (self.font_size + (self.font_size / 3)) as f64);
+
+        let score = format!("{}", self.score);
+
+        ::piston_window::Text::new_color(self.color, self.font_size - (self.font_size / 3))
+            .draw("Score",
+                  cache,
+                  &context.draw_state,
+                  score_label_transform,
+                  gfx);
+
+        ::piston_window::Text::new_color(self.color, self.font_size).draw(&score[..],
+                                                                          cache,
+                                                                          &context.draw_state,
+                                                                          score_number_transform,
+                                                                          gfx);
     }
 }
