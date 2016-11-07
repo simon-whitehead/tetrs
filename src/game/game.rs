@@ -9,6 +9,7 @@ use game::asset_factory::AssetFactory;
 use game::config::{Config, ConfigBuilder};
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
+use game::scene::{Scene, SceneResult};
 use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino};
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
@@ -26,6 +27,38 @@ pub struct Game {
     score: Score,
     tetromino: Tetromino,
     tetromino_factory: TetrominoFactory,
+}
+
+impl Scene for Game {
+    fn process(&mut self, e: &Event) -> SceneResult {
+        match *e {
+            Event::Update(update) => {
+                // Update the globa game time
+                self.update_time(update.dt);
+
+                // Drop the current block if it needs dropping
+                self.move_down(None);
+
+                // Apply the currently active tetromino into the grid
+                self.grid.apply_tetromino(&self.tetromino, &self.config);
+            }
+            Event::Input(ref input_event) => {
+                self.handle_input(input_event);
+            }
+            _ => (),
+        }
+
+        SceneResult::None
+    }
+
+    fn render(&mut self, window: &mut GameWindow, e: &Event) {
+        window.draw_2d(e, |mut c, g| {
+            clear([1.0, 1.0, 1.0, 1.0], g);
+
+            self.grid.render(&self.config, &mut c, g, &e);
+            self.score.render(self.asset_factory.font.as_mut().unwrap(), c, g);
+        });
+    }
 }
 
 impl Game {
@@ -54,26 +87,6 @@ impl Game {
         }
     }
 
-    pub fn process(&mut self, e: &Event) -> bool {
-        match *e {
-            Event::Update(update) => {
-                // Update the globa game time
-                self.update_time(update.dt);
-
-                // Drop the current block if it needs dropping
-                self.move_down(None);
-
-                // Apply the currently active tetromino into the grid
-                self.grid.apply_tetromino(&self.tetromino, &self.config);
-            }
-            Event::Input(ref input_event) => {
-                self.handle_input(input_event);
-            }
-            _ => (),
-        }
-
-        true
-    }
 
     /// Increments the global time
     fn update_time(&mut self, delta: f64) {
@@ -171,14 +184,5 @@ impl Game {
                 _ => (),
             }
         }
-    }
-
-    pub fn render(&mut self, window: &mut GameWindow, e: &Event) {
-        window.draw_2d(e, |mut c, g| {
-            clear([1.0, 1.0, 1.0, 1.0], g);
-
-            self.grid.render(&self.config, &mut c, g, &e);
-            self.score.render(self.asset_factory.font.as_mut().unwrap(), c, g);
-        });
     }
 }

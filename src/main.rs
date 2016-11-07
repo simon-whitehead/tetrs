@@ -5,7 +5,7 @@ extern crate piston_window;
 
 use piston_window::*;
 
-use game::{Game, GameWindow};
+use game::{Game, GameWindow, Scene, SceneResult};
 
 fn main() {
     let mut window = GameWindow::new(450, 600, "TetRS");
@@ -13,7 +13,7 @@ fn main() {
 
     while let Some(e) = window.next() {
 
-        if !game.process(&e) {
+        if let SceneResult::Quit = game.process(&e) {
             break;
         }
 
