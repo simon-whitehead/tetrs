@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use piston_window::{Context, Graphics, Texture, Transformed};
 use piston_window::character::CharacterCache;
 

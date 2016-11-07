@@ -13,6 +13,8 @@ use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
 
+use game::scoring::{Score, ScoringSystem, ScoreMetaData, DefaultScoringSystem};
+
 pub struct Game {
     time: Rc<Cell<f64>>,
     config: Config,
@@ -20,8 +22,8 @@ pub struct Game {
     grid: Grid,
     lockstep_timer: Timer,
     drop_timer: Timer,
-    score: u32,
-    score_label: ::game::text::Text,
+    scoring_system: Box<ScoringSystem>,
+    score: Score,
     tetromino: Tetromino,
     tetromino_factory: TetrominoFactory,
 }
@@ -45,8 +47,8 @@ impl Game {
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
             drop_timer: Timer::new(0.5, time.clone()),
-            score: 0,
-            score_label: ::game::text::Text::new("Score: 0", 16, 320, 29, [0.0, 0.0, 0.0, 1.0]),
+            score: Score::new(),
+            scoring_system: Box::new(DefaultScoringSystem),
             tetromino: tetromino,
             tetromino_factory: factory,
         }
@@ -96,9 +98,12 @@ impl Game {
                     // Store the tetromino in the grid and create a new tetromino
                     self.new_tetromino();
                     self.lockstep_timer.stop();
-                    let multiplier = self.grid.remove_complete_lines(&self.config);
-                    self.score = self.score + (100 * multiplier);
-                    self.score_label.set_text(format!("Score: {}", self.score));
+                    let lines_cleared = self.grid.remove_complete_lines(&self.config);
+
+                    self.scoring_system.update_score(&mut self.score,
+                                                     ScoreMetaData {
+                                                         lines_cleared: lines_cleared,
+                                                     });
                 }
             }
             _ => (),
@@ -152,7 +157,7 @@ impl Game {
             clear([1.0, 1.0, 1.0, 1.0], g);
 
             self.grid.render(&self.config, c, g, &e);
-            self.score_label.render(self.asset_factory.font.as_mut().unwrap(), c, g);
+            self.score.render(self.asset_factory.font.as_mut().unwrap(), c, g);
         });
     }
 }
