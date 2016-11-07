@@ -19,11 +19,28 @@ impl Grid {
         }
     }
 
-    pub fn apply_tetromino(&mut self, tetromino: &Tetromino) {
+    pub fn apply_tetromino(&mut self, tetromino: &Tetromino, config: &Config) {
         self.overlay = [[None; 10]; 22];
 
         for y in 0..4 {
             for x in 0..4 {
+                // Only render the shadow if its enabled
+                if config.shadow_enabled {
+                    let (shadow_x, shadow_y) = tetromino.find_landing_xy(&self.boxes);
+
+                    if let Some(ref shadow) = tetromino.shadow[y][x] {
+                        // Now apply the shadow
+                        let x = (shadow_x + x as i32) as usize;
+                        let y = (shadow_y + y as i32) as usize;
+
+                        if x >= 10 || y >= 22 {
+                            continue;
+                        }
+
+                        self.overlay[y][x] = Some(shadow.clone());
+                    }
+                }
+
                 if let Some(ref block) = tetromino.blocks[y][x] {
                     let x = (tetromino.x + x as i32) as usize;
                     let y = (tetromino.y + y as i32) as usize;
@@ -33,20 +50,6 @@ impl Grid {
                     }
 
                     self.overlay[y][x] = Some(block.clone());
-                }
-
-                let (shadow_x, shadow_y) = tetromino.find_landing_xy(&self.boxes);
-
-                if let Some(ref shadow) = tetromino.shadow[y][x] {
-                    // Now apply the shadow
-                    let x = (shadow_x + x as i32) as usize;
-                    let y = (shadow_y + y as i32) as usize;
-
-                    if x >= 10 || y >= 22 {
-                        continue;
-                    }
-
-                    self.overlay[y][x] = Some(shadow.clone());
                 }
             }
         }

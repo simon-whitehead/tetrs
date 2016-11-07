@@ -64,7 +64,7 @@ impl Game {
                 self.move_down(None);
 
                 // Apply the currently active tetromino into the grid
-                self.grid.apply_tetromino(&self.tetromino);
+                self.grid.apply_tetromino(&self.tetromino, &self.config);
             }
             Event::Input(ref input_event) => {
                 self.handle_input(input_event);
