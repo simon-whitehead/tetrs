@@ -1,10 +1,12 @@
 
 use piston_window::*;
+use piston_window::character::CharacterCache;
 
-use ::game::block::Block;
-use ::game::config::Config;
-use ::game::tetromino::Tetromino;
-use ::game::window::GameWindow;
+use game::block::Block;
+use game::config::Config;
+use game::render_options::RenderOptions;
+use game::tetromino::Tetromino;
+use game::window::GameWindow;
 
 pub struct Grid {
     pub boxes: [[Option<Block>; 10]; 22],
@@ -99,24 +101,34 @@ impl Grid {
         cleared_lines
     }
 
-    pub fn render<G>(&self, config: &Config, context: &mut Context, gfx: &mut G, e: &Event)
-        where G: Graphics
+    pub fn render<'a, G, C>(&self, options: &mut RenderOptions<'a, G, C>, e: &Event)
+        where C: CharacterCache,
+              G: Graphics<Texture = <C as CharacterCache>::Texture>
     {
-        let grid_offset = config.grid_offset;
-        let tile_size = config.tile_size;
+        let grid_offset = options.config.grid_offset;
+        let tile_size = options.config.tile_size;
+
+        // Draw the "border" first
+        rectangle([1.0; 4],
+                  [(grid_offset - 2.0) as f64,
+                   (grid_offset - 2.0) as f64,
+                   (tile_size * 10.0 + 4.0) as f64,
+                   (tile_size * 20.0 + 4.0) as f64],
+                  options.context.transform,
+                  options.graphics);
 
         for mut y in 2..22 {
             for mut x in 0..10 {
 
                 let adjusted_y = y - 2;
                 if let Some(ref block) = self.overlay[y][x] {
-                    block.render(x, y, &config, context, gfx, e);
+                    block.render(x, y, options.config, options.context, options.graphics, e);
                     continue;
                 }
 
                 match self.boxes[y][x] {
                     Some(ref block) => {
-                        block.render(x, y, &config, context, gfx, e);
+                        block.render(x, y, options.config, options.context, options.graphics, e);
                     }
                     None => {
                         rectangle([0.0, 0.0, 0.0, 1.0],
@@ -124,8 +136,8 @@ impl Grid {
                                    adjusted_y as f64 * tile_size + grid_offset,
                                    tile_size as f64,
                                    tile_size as f64],
-                                  context.transform,
-                                  gfx);
+                                  options.context.transform,
+                                  options.graphics);
                     }
                 };
             }

@@ -1,6 +1,8 @@
 use piston_window::{Context, Graphics, Texture, Transformed};
 use piston_window::character::CharacterCache;
 
+use game::render_options::RenderOptions;
+
 pub struct Score {
     score: u32,
     location: (f64, f64),
@@ -22,14 +24,16 @@ impl Score {
         self.score = self.score + value;
     }
 
-    pub fn render<C, G>(&self, cache: &mut C, context: Context, gfx: &mut G)
+    pub fn render<'a, C, G>(&self, options: &mut RenderOptions<'a, G, C>)
         where C: CharacterCache,
               G: Graphics<Texture = <C as CharacterCache>::Texture>
     {
-        let score_label_transform = context.transform
+        let score_label_transform = options.context
+            .transform
             .trans(self.location.0 as f64, self.location.1 as f64);
 
-        let score_number_transform = context.transform
+        let score_number_transform = options.context
+            .transform
             .trans(self.location.0 as f64,
                    self.location.1 + (self.font_size + (self.font_size / 3)) as f64);
 
@@ -37,15 +41,16 @@ impl Score {
 
         ::piston_window::Text::new_color(self.color, self.font_size - (self.font_size / 3))
             .draw("Score",
-                  cache,
-                  &context.draw_state,
+                  options.character_cache,
+                  &options.context.draw_state,
                   score_label_transform,
-                  gfx);
+                  options.graphics);
 
         ::piston_window::Text::new_color(self.color, self.font_size).draw(&score[..],
-                                                                          cache,
-                                                                          &context.draw_state,
+                                                                          options.character_cache,
+                                                                          &options.context
+                                                                              .draw_state,
                                                                           score_number_transform,
-                                                                          gfx);
+                                                                          options.graphics);
     }
 }

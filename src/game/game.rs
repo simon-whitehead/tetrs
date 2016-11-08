@@ -9,6 +9,7 @@ use game::asset_factory::AssetFactory;
 use game::config::{Config, ConfigBuilder};
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
+use game::render_options::RenderOptions;
 use game::scene::{Scene, SceneResult};
 use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino};
 use game::timer::{Timer, TimerTickResult};
@@ -53,10 +54,17 @@ impl Scene for Game {
 
     fn render(&mut self, window: &mut GameWindow, e: &Event) {
         window.draw_2d(e, |mut c, g| {
-            clear([1.0, 1.0, 1.0, 1.0], g);
+            clear([0.0, 0.0, 0.0, 1.0], g);
 
-            self.grid.render(&self.config, &mut c, g, &e);
-            self.score.render(self.asset_factory.font.as_mut().unwrap(), c, g);
+            let mut options = RenderOptions {
+                config: &self.config,
+                context: &mut c,
+                graphics: g,
+                character_cache: self.asset_factory.font.as_mut().unwrap(),
+            };
+
+            self.grid.render(&mut options, &e);
+            self.score.render(&mut options);
         });
     }
 }

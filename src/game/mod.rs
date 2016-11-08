@@ -11,6 +11,7 @@ mod factory;
 mod game;
 mod grid;
 mod main_menu;
+mod render_options;
 mod scene;
 mod tetromino;
 mod text;
