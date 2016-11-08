@@ -31,23 +31,19 @@ impl Scene for MainMenu {
                     match *button {
                         Button::Keyboard(Key::Up) => self.up(),
                         Button::Keyboard(Key::Down) => self.down(),
-                        Button::Keyboard(Key::Return) => self.make_selection(),
-                        _ => (),
+                        Button::Keyboard(Key::Return) => {
+                            match self.selected_item {
+                                SelectedMenuItem::NewGame => SceneResult::NewGame,
+                                SelectedMenuItem::Quit => SceneResult::Quit,
+                            }
+                        }
+                        _ => SceneResult::None,
                     }
-
-                    self.handle_selected_item();
+                } else {
+                    SceneResult::None
                 }
             }
-            _ => (),
-        }
-
-        if let Some(ref selected_item) = self.selection {
-            match *selected_item {
-                SelectedMenuItem::NewGame => SceneResult::NewGame,
-                SelectedMenuItem::Quit => SceneResult::Quit,
-            }
-        } else {
-            SceneResult::None
+            _ => SceneResult::None,
         }
     }
 
@@ -73,19 +69,27 @@ impl MainMenu {
     }
 
     /// Move the selection up
-    fn up(&mut self) {
+    fn up(&mut self) -> SceneResult {
         match self.selected_item {
             SelectedMenuItem::NewGame => self.selected_item = SelectedMenuItem::Quit,
             SelectedMenuItem::Quit => self.selected_item = SelectedMenuItem::NewGame,
         }
+
+        self.handle_selected_item();
+
+        SceneResult::None
     }
 
     /// Move the selection down
-    fn down(&mut self) {
+    fn down(&mut self) -> SceneResult {
         match self.selected_item {
             SelectedMenuItem::NewGame => self.selected_item = SelectedMenuItem::Quit,
             SelectedMenuItem::Quit => self.selected_item = SelectedMenuItem::NewGame,
         }
+
+        self.handle_selected_item();
+
+        SceneResult::None
     }
 
     /// Make the final selection
