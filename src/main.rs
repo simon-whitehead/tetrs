@@ -5,18 +5,22 @@ extern crate piston_window;
 
 use piston_window::*;
 
-use game::{Game, GameWindow, Scene, SceneResult};
+use game::{MainMenu, Game, GameWindow, Scene, SceneResult};
 
 fn main() {
     let mut window = GameWindow::new(450, 600, "TetRS");
-    let mut game = Game::new(window.piston_window.factory.clone());
+    let mut scene: Box<Scene> = Box::new(MainMenu::new(window.piston_window.factory.clone()));
 
     while let Some(e) = window.next() {
 
-        if let SceneResult::Quit = game.process(&e) {
-            break;
+        match scene.process(&e) {
+            SceneResult::NewGame => {
+                scene = Box::new(Game::new(window.piston_window.factory.clone()))
+            }
+            SceneResult::Quit => break,
+            _ => (),
         }
 
-        game.render(&mut window, &e);
+        scene.render(&mut window, &e);
     }
 }

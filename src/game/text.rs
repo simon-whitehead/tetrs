@@ -28,6 +28,10 @@ impl Text {
         self.text = text.into();
     }
 
+    pub fn set_font_size(&mut self, font_size: u32) {
+        self.font_size = font_size;
+    }
+
     pub fn render<C, G>(&self, cache: &mut C, context: Context, gfx: &mut G)
         where C: CharacterCache,
               G: Graphics<Texture = <C as CharacterCache>::Texture>

@@ -10,6 +10,7 @@ pub mod config;
 mod factory;
 mod game;
 mod grid;
+mod main_menu;
 mod scene;
 mod tetromino;
 mod text;
@@ -19,5 +20,6 @@ mod window;
 mod scoring;
 
 pub use self::game::Game;
+pub use self::main_menu::MainMenu;
 pub use self::scene::{Scene, SceneResult};
 pub use self::window::GameWindow;
