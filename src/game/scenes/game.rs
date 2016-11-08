@@ -63,7 +63,7 @@ impl Scene for Game {
                 character_cache: self.asset_factory.font.as_mut().unwrap(),
             };
 
-            self.grid.render(&mut options, &e);
+            self.grid.render(&mut options, e);
             self.score.render(&mut options);
         });
     }

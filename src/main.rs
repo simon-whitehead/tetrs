@@ -15,7 +15,7 @@ fn main() {
         .tile_size(29.0)
         .build();
 
-    let mut scene: Box<Scene> = Box::new(MainMenu::new(&config,
+    let mut scene: Box<Scene> = Box::new(MainMenu::new(config.clone(),
                                                        window.piston_window.factory.clone()));
 
     while let Some(e) = window.next() {

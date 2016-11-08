@@ -4,10 +4,12 @@ use piston_window::*;
 
 use game::asset_factory::AssetFactory;
 use game::config::Config;
+use game::render_options::RenderOptions;
 use game::scenes::{Scene, SceneResult};
 use game::window::GameWindow;
 
 pub struct MainMenu {
+    config: Config,
     asset_factory: AssetFactory,
     selected_item: SelectedMenuItem,
 
@@ -50,15 +52,23 @@ impl Scene for MainMenu {
         window.draw_2d(e, |mut c, g| {
             clear([0.0, 0.0, 0.0, 1.0], g);
 
-            self.new_game_label.render(self.asset_factory.font.as_mut().unwrap(), c, g);
-            self.quit_label.render(self.asset_factory.font.as_mut().unwrap(), c, g);
+            let mut options = RenderOptions {
+                config: &self.config,
+                context: &mut c,
+                graphics: g,
+                character_cache: self.asset_factory.font.as_mut().unwrap(),
+            };
+
+            self.new_game_label.render(&mut options);
+            self.quit_label.render(&mut options);;
         });
     }
 }
 
 impl MainMenu {
-    pub fn new(config: &Config, gfx_factory: Factory) -> MainMenu {
+    pub fn new(config: Config, gfx_factory: Factory) -> MainMenu {
         MainMenu {
+            config: config,
             asset_factory: AssetFactory::new(gfx_factory),
             selected_item: SelectedMenuItem::NewGame,
             new_game_label: ::game::text::Text::new("New Game", 24, 50, 200, config.ui_color),
