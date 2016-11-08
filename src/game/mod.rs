@@ -8,20 +8,17 @@ mod asset_factory;
 mod block;
 pub mod config;
 mod factory;
-mod game;
 mod grid;
-mod main_menu;
 mod render_options;
-mod scene;
 mod tetromino;
 mod text;
 mod timer;
 mod window;
 
+mod scenes;
 mod scoring;
 
 pub use self::config::{Config, ConfigBuilder};
-pub use self::game::Game;
-pub use self::main_menu::MainMenu;
-pub use self::scene::{Scene, SceneResult};
 pub use self::window::GameWindow;
+
+pub use self::scenes::{Game, MainMenu, Scene, SceneResult};

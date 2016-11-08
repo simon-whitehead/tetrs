@@ -4,13 +4,12 @@ use piston_window::*;
 
 use game::asset_factory::AssetFactory;
 use game::config::Config;
-use game::scene::{Scene, SceneResult};
+use game::scenes::{Scene, SceneResult};
 use game::window::GameWindow;
 
 pub struct MainMenu {
     asset_factory: AssetFactory,
     selected_item: SelectedMenuItem,
-    selection: Option<SelectedMenuItem>,
 
     // Menu items
     new_game_label: ::game::text::Text,
@@ -62,7 +61,6 @@ impl MainMenu {
         MainMenu {
             asset_factory: AssetFactory::new(gfx_factory),
             selected_item: SelectedMenuItem::NewGame,
-            selection: None,
             new_game_label: ::game::text::Text::new("New Game", 24, 50, 200, config.ui_color),
             quit_label: ::game::text::Text::new("Quit", 16, 50, 250, config.ui_color),
         }
@@ -90,11 +88,6 @@ impl MainMenu {
         self.handle_selected_item();
 
         SceneResult::None
-    }
-
-    /// Make the final selection
-    fn make_selection(&mut self) {
-        self.selection = Some(self.selected_item.clone());
     }
 
     fn handle_selected_item(&mut self) {

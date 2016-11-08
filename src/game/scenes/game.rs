@@ -10,7 +10,7 @@ use game::config::{Config, ConfigBuilder};
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
 use game::render_options::RenderOptions;
-use game::scene::{Scene, SceneResult};
+use game::scenes::{Scene, SceneResult};
 use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino};
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
