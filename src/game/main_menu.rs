@@ -3,6 +3,7 @@ use gfx_device_gl::Factory;
 use piston_window::*;
 
 use game::asset_factory::AssetFactory;
+use game::config::Config;
 use game::scene::{Scene, SceneResult};
 use game::window::GameWindow;
 
@@ -61,13 +62,13 @@ impl Scene for MainMenu {
 }
 
 impl MainMenu {
-    pub fn new(gfx_factory: Factory) -> MainMenu {
+    pub fn new(config: &Config, gfx_factory: Factory) -> MainMenu {
         MainMenu {
             asset_factory: AssetFactory::new(gfx_factory),
             selected_item: SelectedMenuItem::NewGame,
             selection: None,
-            new_game_label: ::game::text::Text::new("New Game", 24, 50, 200, [1.0, 1.0, 0.0, 1.0]),
-            quit_label: ::game::text::Text::new("Quit", 16, 50, 250, [1.0, 1.0, 0.0, 1.0]),
+            new_game_label: ::game::text::Text::new("New Game", 24, 50, 200, config.ui_color),
+            quit_label: ::game::text::Text::new("Quit", 16, 50, 250, config.ui_color),
         }
     }
 

@@ -20,6 +20,7 @@ mod window;
 
 mod scoring;
 
+pub use self::config::{Config, ConfigBuilder};
 pub use self::game::Game;
 pub use self::main_menu::MainMenu;
 pub use self::scene::{Scene, SceneResult};

@@ -1,6 +1,7 @@
 use piston_window::{Context, Graphics, Texture, Transformed};
 use piston_window::character::CharacterCache;
 
+use game::config::Config;
 use game::render_options::RenderOptions;
 
 pub struct Score {
@@ -11,11 +12,11 @@ pub struct Score {
 }
 
 impl Score {
-    pub fn new() -> Score {
+    pub fn new(config: &Config) -> Score {
         Score {
             score: 0,
             location: (320.0, 29.0),
-            color: [0.0, 0.0, 0.0, 1.0],
+            color: config.ui_color,
             font_size: 16,
         }
     }

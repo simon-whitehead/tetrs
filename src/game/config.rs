@@ -1,4 +1,5 @@
 
+#[derive(Copy, Clone)]
 pub struct Config {
     pub grid_offset: f64,
     pub tile_size: f64,

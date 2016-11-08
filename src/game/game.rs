@@ -70,16 +70,12 @@ impl Scene for Game {
 }
 
 impl Game {
-    pub fn new(gfx_factory: Factory) -> Game {
+    pub fn new(config: Config, gfx_factory: Factory) -> Game {
         let time = RcCell!(0.0);
         let factory = TetrominoFactory::new();
-        let config = ConfigBuilder::new()
-            .grid_size((10, 22))
-            .grid_offset(10.0)
-            .tile_size(29.0)
-            .build();
 
         let tetromino = factory.create(&config);
+        let score = Score::new(&config);
 
         Game {
             time: time.clone(),
@@ -88,7 +84,7 @@ impl Game {
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
             drop_timer: Timer::new(0.5, time.clone()),
-            score: Score::new(),
+            score: score,
             scoring_system: Box::new(DefaultScoringSystem),
             tetromino: tetromino,
             tetromino_factory: factory,
