@@ -22,7 +22,7 @@ impl TetrominoFactory {
         functions.push(Self::create_T);
         functions.push(Self::create_Z);
 
-        let random_number = thread_rng().gen_range(0, 6);
+        let random_number = thread_rng().gen_range(0, 7);
 
         let shape = (functions[random_number as usize])(1.0);
         let shadow = (functions[random_number as usize])(0.65);
