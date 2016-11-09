@@ -19,6 +19,7 @@ use game::leveling::{Level, LevelingSystem, DefaultLevelingSystem, LevelMetaData
 use game::scoring::{Score, ScoringSystem, ScoreMetaData, DefaultScoringSystem};
 
 static DROP_TIME: f64 = 0.5;
+static DROP_FACTOR: f64 = 0.1;
 
 pub struct Game {
     time: Rc<Cell<f64>>,
@@ -165,7 +166,7 @@ impl Game {
 
                 self.leveling_system.process(&mut level_metadata);
             }
-            self.drop_timer.reset(DROP_TIME - (self.level.level as f64 * 0.1));
+            self.drop_timer.reset(DROP_TIME - (self.level.level as f64 * DROP_FACTOR));
         }
     }
 
