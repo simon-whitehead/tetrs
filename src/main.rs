@@ -5,7 +5,7 @@ extern crate piston_window;
 
 use piston_window::*;
 
-use game::{Config, ConfigBuilder, MainMenu, Game, GameWindow, Scene, SceneResult};
+use game::{Config, ConfigBuilder, MainMenu, Game, GameOver, GameWindow, Scene, SceneResult};
 
 fn main() {
     let mut window = GameWindow::new(450, 600, "TetRS");
@@ -23,6 +23,10 @@ fn main() {
         match scene.process(&e) {
             SceneResult::NewGame => {
                 scene = Box::new(Game::new(config.clone(), window.piston_window.factory.clone()))
+            }
+            SceneResult::GameOver => {
+                scene = Box::new(GameOver::new(config.clone(),
+                                               window.piston_window.factory.clone()))
             }
             SceneResult::Quit => break,
             _ => (),

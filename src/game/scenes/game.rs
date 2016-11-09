@@ -38,7 +38,9 @@ impl Scene for Game {
                 self.update_time(update.dt);
 
                 // Drop the current block if it needs dropping
-                self.move_down(None);
+                if let SceneResult::GameOver = self.move_down(None) {
+                    return SceneResult::GameOver;
+                }
 
                 // Apply the currently active tetromino into the grid
                 self.grid.apply_tetromino(&self.tetromino, &self.config);
@@ -97,7 +99,7 @@ impl Game {
         self.time.set(self.time.get() + delta);
     }
 
-    fn move_down<O>(&mut self, force_drop: O)
+    fn move_down<O>(&mut self, force_drop: O) -> SceneResult
         where O: Into<Option<bool>>
     {
         // If we can drop, check if we are ready and drop the active tetromino
@@ -110,10 +112,17 @@ impl Game {
                 }
             }
             MoveResult::Blocked => {
-                self.handle_blocked(None);
+                if self.tetromino.y <= 0 {
+                    // We've hit the top
+                    return SceneResult::GameOver;
+                } else {
+                    self.handle_blocked(None);
+                }
             }
             _ => (),
         }
+
+        SceneResult::None
     }
 
     fn handle_blocked<O>(&mut self, force: O)

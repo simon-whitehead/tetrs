@@ -10,5 +10,6 @@ pub trait Scene {
 pub enum SceneResult {
     None,
     NewGame,
+    GameOver,
     Quit,
 }
