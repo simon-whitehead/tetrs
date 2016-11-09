@@ -9,6 +9,7 @@ pub trait Scene {
 
 pub enum SceneResult {
     None,
+    MainMenu,
     NewGame,
     GameOver,
     Quit,

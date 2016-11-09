@@ -16,7 +16,16 @@ pub struct GameOver {
 
 impl Scene for GameOver {
     fn process(&mut self, e: &Event) -> SceneResult {
-        SceneResult::None
+        match *e {
+            Event::Input(ref input_event) => {
+                if let Input::Press(_) = *input_event {
+                    SceneResult::MainMenu
+                } else {
+                    SceneResult::None
+                }
+            }
+            _ => SceneResult::None,
+        }
     }
 
     fn render(&mut self, window: &mut GameWindow, e: &Event) {

@@ -15,12 +15,16 @@ fn main() {
         .tile_size(29.0)
         .build();
 
-    let mut scene: Box<Scene> = Box::new(MainMenu::new(config.clone(),
-                                                       window.piston_window.factory.clone()));
+    let main_menu_generator = |window: &GameWindow, config: &Config| -> MainMenu {
+        MainMenu::new(config.clone(), window.piston_window.factory.clone())
+    };
+
+    let mut scene: Box<Scene> = Box::new(main_menu_generator(&window, &config));
 
     while let Some(e) = window.next() {
 
         match scene.process(&e) {
+            SceneResult::MainMenu => scene = Box::new(main_menu_generator(&window, &config)),
             SceneResult::NewGame => {
                 scene = Box::new(Game::new(config.clone(), window.piston_window.factory.clone()))
             }

@@ -22,7 +22,6 @@ impl GameWindow {
 
     fn create_window(width: u32, height: u32, title: String) -> PistonWindow {
         WindowSettings::new(title, (width, height))
-            .exit_on_esc(true)
             .opengl(OpenGL::V3_2)
             .build()
             .unwrap()
