@@ -21,6 +21,7 @@ pub struct Game {
     time: Rc<Cell<f64>>,
     config: Config,
     asset_factory: AssetFactory,
+    quit: bool,
     grid: Grid,
     lockstep_timer: Timer,
     drop_timer: Timer,
@@ -51,7 +52,11 @@ impl Scene for Game {
             _ => (),
         }
 
-        SceneResult::None
+        if self.quit {
+            SceneResult::MainMenu
+        } else {
+            SceneResult::None
+        }
     }
 
     fn render(&mut self, window: &mut GameWindow, e: &Event) {
@@ -83,6 +88,7 @@ impl Game {
             time: time.clone(),
             config: config,
             asset_factory: AssetFactory::new(gfx_factory),
+            quit: false,
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
             drop_timer: Timer::new(0.5, time.clone()),
@@ -160,6 +166,7 @@ impl Game {
     fn handle_input(&mut self, input: &Input) {
         if let Input::Press(ref button) = *input {
             match *button {
+                Button::Keyboard(Key::Escape) => self.quit = true,
                 Button::Keyboard(Key::Z) => {
                     match self.tetromino.can_rotate(Rotation::CounterClockwise, &self.grid.boxes) {
                         RotationResult::Allow => self.tetromino.rotate(Rotation::CounterClockwise),
