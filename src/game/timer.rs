@@ -33,7 +33,14 @@ impl Timer {
     }
 
     /// Updates the timer global time and resets the interval
-    pub fn reset(&mut self) {
+    pub fn reset<I>(&mut self, interval: I)
+        where I: Into<Option<f64>>
+    {
+        // Update with a new interval if supplied
+        if let Some(val) = interval.into() {
+            self.interval = val;
+        }
+
         self.started = true;
         self.time = self.global_time.get() + self.interval;
     }

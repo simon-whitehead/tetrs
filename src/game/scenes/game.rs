@@ -15,7 +15,10 @@ use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino
 use game::timer::{Timer, TimerTickResult};
 use game::window::GameWindow;
 
+use game::leveling::{Level, LevelingSystem, DefaultLevelingSystem, LevelMetaData};
 use game::scoring::{Score, ScoringSystem, ScoreMetaData, DefaultScoringSystem};
+
+static DROP_TIME: f64 = 0.5;
 
 pub struct Game {
     time: Rc<Cell<f64>>,
@@ -27,6 +30,9 @@ pub struct Game {
     drop_timer: Timer,
     scoring_system: Box<ScoringSystem>,
     score: Score,
+    leveling_system: Box<LevelingSystem>,
+    level: Level,
+    total_lines_cleared: u32,
     tetromino: Tetromino,
     tetromino_factory: TetrominoFactory,
 }
@@ -72,6 +78,7 @@ impl Scene for Game {
 
             self.grid.render(&mut options, e);
             self.score.render(&mut options);
+            self.level.render(&mut options);
         });
     }
 }
@@ -83,6 +90,7 @@ impl Game {
 
         let tetromino = factory.create(&config);
         let score = Score::new(&config);
+        let level = Level::new(&config);
 
         Game {
             time: time.clone(),
@@ -91,9 +99,12 @@ impl Game {
             quit: false,
             grid: Grid::new(),
             lockstep_timer: Timer::new(0.5, time.clone()),
-            drop_timer: Timer::new(0.5, time.clone()),
+            drop_timer: Timer::new(DROP_TIME, time.clone()),
             score: score,
+            level: level,
             scoring_system: Box::new(DefaultScoringSystem),
+            leveling_system: Box::new(DefaultLevelingSystem),
+            total_lines_cleared: 0,
             tetromino: tetromino,
             tetromino_factory: factory,
         }
@@ -113,8 +124,8 @@ impl Game {
             MoveResult::Allow => {
                 if self.drop_timer.elapsed() || force_drop.into().is_some() {
                     self.tetromino.drop_down();
-                    self.drop_timer.reset();
-                    self.lockstep_timer.reset();
+                    self.drop_timer.reset(None);
+                    self.lockstep_timer.reset(None);
                 }
             }
             MoveResult::Blocked => {
@@ -140,9 +151,21 @@ impl Game {
             self.new_tetromino();
             self.lockstep_timer.stop();
             let lines_cleared = self.grid.remove_complete_lines(&self.config);
+            self.total_lines_cleared = self.total_lines_cleared + lines_cleared;
 
-            self.scoring_system.update_score(&mut self.score,
-                                             ScoreMetaData { lines_cleared: lines_cleared });
+            {
+                let mut level_metadata = LevelMetaData {
+                    level: &mut self.level,
+                    lines_cleared: lines_cleared,
+                    total_lines_cleared: self.total_lines_cleared,
+                };
+
+                self.scoring_system.update_score(&mut self.score,
+                                                 ScoreMetaData { lines_cleared: lines_cleared });
+
+                self.leveling_system.process(&mut level_metadata);
+            }
+            self.drop_timer.reset(DROP_TIME - (self.level.level as f64 * 0.1));
         }
     }
 

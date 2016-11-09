@@ -9,6 +9,7 @@ mod block;
 pub mod config;
 mod factory;
 mod grid;
+mod leveling;
 mod render_options;
 mod tetromino;
 mod text;
