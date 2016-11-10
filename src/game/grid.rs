@@ -38,7 +38,7 @@ impl Grid {
                             continue;
                         }
 
-                        self.overlay[y][x] = Some(shadow.clone());
+                        self.overlay[y][x] = Some(*shadow);
                     }
                 }
 
@@ -50,7 +50,7 @@ impl Grid {
                         continue;
                     }
 
-                    self.overlay[y][x] = Some(block.clone());
+                    self.overlay[y][x] = Some(*block);
                 }
             }
         }
@@ -67,7 +67,7 @@ impl Grid {
                         continue;
                     }
 
-                    self.boxes[y][x] = Some(block.clone());
+                    self.boxes[y][x] = Some(*block);
                 }
             }
         }
@@ -88,12 +88,12 @@ impl Grid {
             // into the currently pointed line
             if !complete {
                 self.boxes[y_mut] = self.boxes[y as usize];
-                y_mut = y_mut - 1;
+                y_mut -= 1;
                 if y_mut == 0 {
                     break;
                 }
             } else {
-                cleared_lines = cleared_lines + 1;
+                cleared_lines += 1;
             }
         }
 

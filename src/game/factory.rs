@@ -30,7 +30,7 @@ impl TetrominoFactory {
         let shape = TetrominoShape(shape.0, shape.1, shape.2, shape.3);
         let shadow = TetrominoShape(shadow.0, shadow.1, shadow.2, shadow.3);
 
-        Tetromino::new(shape, shadow, &config)
+        Tetromino::new(shape, shadow, config)
     }
 
     fn create_blended_color(color: [f32; 3], opacity: f32) -> [f32; 4] {
@@ -54,27 +54,27 @@ impl TetrominoFactory {
 
         TetrominoShape(// North
                        [[None, None, None, None],
-                        [i.clone(), i.clone(), i.clone(), i.clone()],
+                        [i, i, i, i],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, None, i.clone(), None],
-                        [None, None, i.clone(), None],
-                        [None, None, i.clone(), None],
-                        [None, None, i.clone(), None]],
+                       [[None, None, i, None],
+                        [None, None, i, None],
+                        [None, None, i, None],
+                        [None, None, i, None]],
 
                        // South
                        [[None, None, None, None],
                         [None, None, None, None],
-                        [i.clone(), i.clone(), i.clone(), i.clone()],
+                        [i, i, i, i],
                         [None, None, None, None]],
 
                        // West
-                       [[None, i.clone(), None, None],
-                        [None, i.clone(), None, None],
-                        [None, i.clone(), None, None],
-                        [None, i.clone(), None, None]])
+                       [[None, i, None, None],
+                        [None, i, None, None],
+                        [None, i, None, None],
+                        [None, i, None, None]])
     }
 
     fn create_j(opacity: f32) -> TetrominoShape {
@@ -83,27 +83,27 @@ impl TetrominoFactory {
         let j = Some(Block::new(j_color));
 
         TetrominoShape(// North
-                       [[j.clone(), None, None, None],
-                        [j.clone(), j.clone(), j.clone(), None],
+                       [[j, None, None, None],
+                        [j, j, j, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, j.clone(), j.clone(), None],
-                        [None, j.clone(), None, None],
-                        [None, j.clone(), None, None],
+                       [[None, j, j, None],
+                        [None, j, None, None],
+                        [None, j, None, None],
                         [None, None, None, None]],
 
                        // South
                        [[None, None, None, None],
-                        [j.clone(), j.clone(), j.clone(), None],
-                        [None, None, j.clone(), None],
+                        [j, j, j, None],
+                        [None, None, j, None],
                         [None, None, None, None]],
 
                        // West
-                       [[None, j.clone(), None, None],
-                        [None, j.clone(), None, None],
-                        [j.clone(), j.clone(), None, None],
+                       [[None, j, None, None],
+                        [None, j, None, None],
+                        [j, j, None, None],
                         [None, None, None, None]])
     }
 
@@ -113,27 +113,27 @@ impl TetrominoFactory {
         let l = Some(Block::new(l_color));
 
         TetrominoShape(// North
-                       [[None, None, l.clone(), None],
-                        [l.clone(), l.clone(), l.clone(), None],
+                       [[None, None, l, None],
+                        [l, l, l, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, l.clone(), None, None],
-                        [None, l.clone(), None, None],
-                        [None, l.clone(), l.clone(), None],
+                       [[None, l, None, None],
+                        [None, l, None, None],
+                        [None, l, l, None],
                         [None, None, None, None]],
 
                        // South
                        [[None, None, None, None],
-                        [l.clone(), l.clone(), l.clone(), None],
-                        [l.clone(), None, None, None],
+                        [l, l, l, None],
+                        [l, None, None, None],
                         [None, None, None, None]],
 
                        // West
-                       [[l.clone(), l.clone(), None, None],
-                        [None, l.clone(), None, None],
-                        [None, l.clone(), None, None],
+                       [[l, l, None, None],
+                        [None, l, None, None],
+                        [None, l, None, None],
                         [None, None, None, None]])
     }
 
@@ -143,26 +143,26 @@ impl TetrominoFactory {
         let o = Some(Block::new(o_color));
 
         TetrominoShape(// North
-                       [[None, o.clone(), o.clone(), None],
-                        [None, o.clone(), o.clone(), None],
+                       [[None, o, o, None],
+                        [None, o, o, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, o.clone(), o.clone(), None],
-                        [None, o.clone(), o.clone(), None],
+                       [[None, o, o, None],
+                        [None, o, o, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // South
-                       [[None, o.clone(), o.clone(), None],
-                        [None, o.clone(), o.clone(), None],
+                       [[None, o, o, None],
+                        [None, o, o, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // West
-                       [[None, o.clone(), o.clone(), None],
-                        [None, o.clone(), o.clone(), None],
+                       [[None, o, o, None],
+                        [None, o, o, None],
                         [None, None, None, None],
                         [None, None, None, None]])
     }
@@ -173,27 +173,27 @@ impl TetrominoFactory {
         let s = Some(Block::new(s_color));
 
         TetrominoShape(// North
-                       [[None, s.clone(), s.clone(), None],
-                        [s.clone(), s.clone(), None, None],
+                       [[None, s, s, None],
+                        [s, s, None, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, s.clone(), None, None],
-                        [None, s.clone(), s.clone(), None],
-                        [None, None, s.clone(), None],
+                       [[None, s, None, None],
+                        [None, s, s, None],
+                        [None, None, s, None],
                         [None, None, None, None]],
 
                        // South
                        [[None, None, None, None],
-                        [None, s.clone(), s.clone(), None],
-                        [s.clone(), s.clone(), None, None],
+                        [None, s, s, None],
+                        [s, s, None, None],
                         [None, None, None, None]],
 
                        // West
-                       [[s.clone(), None, None, None],
-                        [s.clone(), s.clone(), None, None],
-                        [None, s.clone(), None, None],
+                       [[s, None, None, None],
+                        [s, s, None, None],
+                        [None, s, None, None],
                         [None, None, None, None]])
     }
 
@@ -203,27 +203,27 @@ impl TetrominoFactory {
         let t = Some(Block::new(t_color));
 
         TetrominoShape(// North
-                       [[None, t.clone(), None, None],
-                        [t.clone(), t.clone(), t.clone(), None],
+                       [[None, t, None, None],
+                        [t, t, t, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, t.clone(), None, None],
-                        [None, t.clone(), t.clone(), None],
-                        [None, t.clone(), None, None],
+                       [[None, t, None, None],
+                        [None, t, t, None],
+                        [None, t, None, None],
                         [None, None, None, None]],
 
                        // South
                        [[None, None, None, None],
-                        [t.clone(), t.clone(), t.clone(), None],
-                        [None, t.clone(), None, None],
+                        [t, t, t, None],
+                        [None, t, None, None],
                         [None, None, None, None]],
 
                        // West
-                       [[None, t.clone(), None, None],
-                        [t.clone(), t.clone(), None, None],
-                        [None, t.clone(), None, None],
+                       [[None, t, None, None],
+                        [t, t, None, None],
+                        [None, t, None, None],
                         [None, None, None, None]])
     }
 
@@ -233,27 +233,27 @@ impl TetrominoFactory {
         let z = Some(Block::new(z_color));
 
         TetrominoShape(// North
-                       [[z.clone(), z.clone(), None, None],
-                        [None, z.clone(), z.clone(), None],
+                       [[z, z, None, None],
+                        [None, z, z, None],
                         [None, None, None, None],
                         [None, None, None, None]],
 
                        // East
-                       [[None, None, None, z.clone()],
-                        [None, None, z.clone(), z.clone()],
-                        [None, None, z.clone(), None],
+                       [[None, None, None, z],
+                        [None, None, z, z],
+                        [None, None, z, None],
                         [None, None, None, None]],
 
                        // South
                        [[None, None, None, None],
-                        [z.clone(), z.clone(), None, None],
-                        [None, z.clone(), z.clone(), None],
+                        [z, z, None, None],
+                        [None, z, z, None],
                         [None, None, None, None]],
 
                        // West
-                       [[None, z.clone(), None, None],
-                        [z.clone(), z.clone(), None, None],
-                        [z.clone(), None, None, None],
+                       [[None, z, None, None],
+                        [z, z, None, None],
+                        [z, None, None, None],
                         [None, None, None, None]])
     }
 }

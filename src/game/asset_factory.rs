@@ -13,9 +13,9 @@ impl AssetFactory {
             .for_folder("assets")
             .unwrap();
 
-        let ref font = asset_folder.join("NimbusSanL-Regu.ttf");
+        let font = asset_folder.join("NimbusSanL-Regu.ttf");
 
-        let glyphs = Glyphs::new(font, factory.clone()).unwrap();
+        let glyphs = Glyphs::new(&font, factory.clone()).unwrap();
 
         AssetFactory { font: Some(glyphs) }
     }

@@ -22,7 +22,7 @@ impl Level {
     }
 
     pub fn increase(&mut self) {
-        self.level = self.level + 1;
+        self.level += 1;
     }
 
     pub fn render<'a, C, G>(&self, options: &mut RenderOptions<'a, G, C>)

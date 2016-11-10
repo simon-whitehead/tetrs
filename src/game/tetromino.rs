@@ -53,8 +53,8 @@ impl Tetromino {
         Tetromino {
             x: (config.grid_size.0 as i32 / 2) - 2,
             y: 0,
-            blocks: shape.0.clone(),
-            shadow: shadow.0.clone(),
+            blocks: shape.0,
+            shadow: shadow.0,
             north: shape.0,
             east: shape.1,
             south: shape.2,
@@ -119,9 +119,9 @@ impl Tetromino {
 
         // Loop over each block of this tetromino and compare it
         // to the offset within the grid where we want to move to
-        for y in 0..4 {
-            for x in 0..4 {
-                if desired_blocks[y][x].is_some() {
+        for (y, y_block) in desired_blocks.iter().enumerate().take(4) {
+            for (x, x_block) in y_block.iter().enumerate().take(4) {
+                if x_block.is_some() {
                     let x = (self.x + x as i32) as isize;
                     let y = (self.y + y as i32) as isize;
 
