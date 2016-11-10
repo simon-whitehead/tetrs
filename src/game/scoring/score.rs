@@ -22,7 +22,7 @@ impl Score {
     }
 
     pub fn add(&mut self, value: u32) {
-        self.score = self.score + value;
+        self.score += value;
     }
 
     pub fn render<'a, C, G>(&self, options: &mut RenderOptions<'a, G, C>)

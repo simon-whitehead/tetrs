@@ -151,7 +151,7 @@ impl Game {
             self.new_tetromino();
             self.lockstep_timer.stop();
             let lines_cleared = self.grid.remove_complete_lines(&self.config);
-            self.total_lines_cleared = self.total_lines_cleared + lines_cleared;
+            self.total_lines_cleared += lines_cleared;
 
             {
                 let mut level_metadata = LevelMetaData {
@@ -172,12 +172,8 @@ impl Game {
     /// Drops a Tetromino straight down until it hits the lowest
     /// possible point.
     fn drop_tetromino(&mut self) {
-        loop {
-            if let MoveResult::Allow = self.tetromino.can_move(Direction::South, &self.grid.boxes) {
-                self.tetromino.drop_down();
-            } else {
-                break;
-            }
+        while let MoveResult::Allow = self.tetromino.can_move(Direction::South, &self.grid.boxes) {
+            self.tetromino.drop_down();
         }
     }
 
@@ -191,15 +187,15 @@ impl Game {
             match *button {
                 Button::Keyboard(Key::Escape) => self.quit = true,
                 Button::Keyboard(Key::Z) => {
-                    match self.tetromino.can_rotate(Rotation::CounterClockwise, &self.grid.boxes) {
-                        RotationResult::Allow => self.tetromino.rotate(Rotation::CounterClockwise),
-                        _ => (),
+                    if let RotationResult::Allow = self.tetromino
+                        .can_rotate(Rotation::CounterClockwise, &self.grid.boxes) {
+                        self.tetromino.rotate(Rotation::CounterClockwise);
                     }
                 }
                 Button::Keyboard(Key::X) => {
-                    match self.tetromino.can_rotate(Rotation::Clockwise, &self.grid.boxes) {
-                        RotationResult::Allow => self.tetromino.rotate(Rotation::Clockwise),
-                        _ => (),
+                    if let RotationResult::Allow = self.tetromino
+                        .can_rotate(Rotation::Clockwise, &self.grid.boxes) {
+                        self.tetromino.rotate(Rotation::Clockwise);
                     }
                 }
                 Button::Keyboard(Key::Left) => {

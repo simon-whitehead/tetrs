@@ -150,7 +150,7 @@ impl Tetromino {
     /// Tests a cloned Tetromino to find where this current Tetromino
     /// will land
     pub fn find_landing_xy(&self, grid: &[[Option<Block>; 10]; 22]) -> (i32, i32) {
-        let mut clone = self.clone();
+        let mut clone = *self;
 
         loop {
             if let MoveResult::Allow = clone.can_move(Direction::South, grid) {
@@ -201,18 +201,18 @@ impl Tetromino {
         let s = shadow.into();
         if s.is_some() && s.unwrap() {
             match direction {
-                Direction::North => self.shadow_north.clone(),
-                Direction::East => self.shadow_east.clone(),
-                Direction::South => self.shadow_south.clone(),
-                Direction::West => self.shadow_west.clone(),
+                Direction::North => self.shadow_north,
+                Direction::East => self.shadow_east,
+                Direction::South => self.shadow_south,
+                Direction::West => self.shadow_west,
 
             }
         } else {
             match direction {
-                Direction::North => self.north.clone(),
-                Direction::East => self.east.clone(),
-                Direction::South => self.south.clone(),
-                Direction::West => self.west.clone(),
+                Direction::North => self.north,
+                Direction::East => self.east,
+                Direction::South => self.south,
+                Direction::West => self.west,
             }
         }
     }
@@ -234,14 +234,14 @@ impl Tetromino {
     }
 
     pub fn drop_down(&mut self) {
-        self.y = self.y + 1;
+        self.y += 1;
     }
 
     pub fn move_left(&mut self) {
-        self.x = self.x - 1;
+        self.x -= 1;
     }
 
     pub fn move_right(&mut self) {
-        self.x = self.x + 1;
+        self.x += 1;
     }
 }

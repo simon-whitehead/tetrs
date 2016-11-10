@@ -15,22 +15,21 @@ fn main() {
         .ui_color([1.0; 4])
         .build();
 
-    let main_menu_generator = |window: &GameWindow, config: &Config| -> MainMenu {
-        MainMenu::new(config.clone(), window.piston_window.factory.clone())
+    let main_menu_generator = |window: &GameWindow, config: Config| -> MainMenu {
+        MainMenu::new(config, window.piston_window.factory.clone())
     };
 
-    let mut scene: Box<Scene> = Box::new(main_menu_generator(&window, &config));
+    let mut scene: Box<Scene> = Box::new(main_menu_generator(&window, config));
 
     while let Some(e) = window.next() {
 
         match scene.process(&e) {
-            SceneResult::MainMenu => scene = Box::new(main_menu_generator(&window, &config)),
+            SceneResult::MainMenu => scene = Box::new(main_menu_generator(&window, config)),
             SceneResult::NewGame => {
-                scene = Box::new(Game::new(config.clone(), window.piston_window.factory.clone()))
+                scene = Box::new(Game::new(config, window.piston_window.factory.clone()))
             }
             SceneResult::GameOver => {
-                scene = Box::new(GameOver::new(config.clone(),
-                                               window.piston_window.factory.clone()))
+                scene = Box::new(GameOver::new(config, window.piston_window.factory.clone()))
             }
             SceneResult::Quit => break,
             _ => (),
