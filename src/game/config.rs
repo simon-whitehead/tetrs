@@ -52,7 +52,7 @@ impl ConfigBuilder {
         self
     }
 
-    pub fn build(mut self) -> Config {
+    pub fn build(self) -> Config {
         Config {
             grid_size: self.g_size,
             grid_offset: self.g_offset,

@@ -29,7 +29,7 @@ impl Block {
                      config: &Config,
                      context: &mut Context,
                      gfx: &mut G,
-                     e: &Event)
+                     _: &Event)
         where G: Graphics
     {
         let grid_offset = config.grid_offset;

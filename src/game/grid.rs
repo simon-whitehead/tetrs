@@ -6,7 +6,6 @@ use game::block::Block;
 use game::config::Config;
 use game::render_options::RenderOptions;
 use game::tetromino::Tetromino;
-use game::window::GameWindow;
 
 pub struct Grid {
     pub boxes: [[Option<Block>; 10]; 22],
@@ -117,8 +116,8 @@ impl Grid {
                   options.context.transform,
                   options.graphics);
 
-        for mut y in 2..22 {
-            for mut x in 0..10 {
+        for y in 2..22 {
+            for x in 0..10 {
 
                 let adjusted_y = y - 2;
                 if let Some(ref block) = self.overlay[y][x] {

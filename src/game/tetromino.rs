@@ -1,8 +1,6 @@
-use piston_window::*;
 
 use ::game::block::Block;
 use ::game::config::Config;
-use game::factory::TetrominoFactory;
 
 #[derive(Copy, Clone)]
 pub enum Direction {
@@ -74,14 +72,14 @@ impl Tetromino {
     pub fn can_move(&self, direction: Direction, grid: &[[Option<Block>; 10]; 22]) -> MoveResult {
 
         // Determine the direction on each axis we're attempting to move
-        let mut y_dir = Self::get_y_direction(direction) as i32;
-        let mut x_dir = Self::get_x_direction(direction) as i32;
+        let y_dir = Self::get_y_direction(direction) as i32;
+        let x_dir = Self::get_x_direction(direction) as i32;
 
         // Loop over each block of this tetromino and compare it
         // to the offset within the grid where we want to move to
         for y in 0..4 {
             for x in 0..4 {
-                if let Some(ref block) = self.blocks[y][x] {
+                if self.blocks[y][x].is_some() {
                     let x = ((self.x + x as i32) + x_dir) as isize;
                     let y = ((self.y + y as i32) + y_dir) as isize;
 
@@ -96,7 +94,7 @@ impl Tetromino {
                     }
 
                     // Otherwise check if we're smashing in to another block
-                    if let Some(ref block) = grid[y as usize][x as usize] {
+                    if grid[y as usize][x as usize].is_some() {
                         // Deny left and right.. but block downwards
                         match direction {
                             Direction::East | Direction::West => return MoveResult::Deny,
@@ -123,7 +121,7 @@ impl Tetromino {
         // to the offset within the grid where we want to move to
         for y in 0..4 {
             for x in 0..4 {
-                if let Some(ref block) = desired_blocks[y][x] {
+                if desired_blocks[y][x].is_some() {
                     let x = (self.x + x as i32) as isize;
                     let y = (self.y + y as i32) as isize;
 
@@ -138,7 +136,7 @@ impl Tetromino {
                     }
 
                     // Otherwise check if we're smashing in to another block
-                    if let Some(ref block) = grid[y as usize][x as usize] {
+                    if grid[y as usize][x as usize].is_some() {
                         // Deny left and right.. but block downwards
                         return RotationResult::Deny;
                     }
@@ -237,10 +235,6 @@ impl Tetromino {
 
     pub fn drop_down(&mut self) {
         self.y = self.y + 1;
-    }
-
-    pub fn move_up(&mut self) {
-        self.y = self.y - 1;
     }
 
     pub fn move_left(&mut self) {

@@ -3,16 +3,15 @@ use std::rc::Rc;
 
 use gfx_device_gl::Factory;
 use piston_window::*;
-use piston_window::character::CharacterCache;
 
 use game::asset_factory::AssetFactory;
-use game::config::{Config, ConfigBuilder};
+use game::config::Config;
 use game::factory::TetrominoFactory;
 use game::grid::Grid;
 use game::render_options::RenderOptions;
 use game::scenes::{Scene, SceneResult};
 use game::tetromino::{Direction, MoveResult, Rotation, RotationResult, Tetromino};
-use game::timer::{Timer, TimerTickResult};
+use game::timer::Timer;
 use game::window::GameWindow;
 
 use game::leveling::{Level, LevelingSystem, DefaultLevelingSystem, LevelMetaData};

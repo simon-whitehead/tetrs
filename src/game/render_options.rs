@@ -2,7 +2,6 @@
 use piston_window::*;
 use piston_window::character::CharacterCache;
 
-use game::asset_factory::AssetFactory;
 use game::config::Config;
 
 pub struct RenderOptions<'a, G: 'a, C: 'a>

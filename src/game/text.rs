@@ -1,4 +1,4 @@
-use piston_window::{Context, Graphics, Texture, Transformed};
+use piston_window::{Graphics, Transformed};
 use piston_window::character::CharacterCache;
 
 use game::render_options::RenderOptions;
@@ -22,12 +22,6 @@ impl Text {
             y: y,
             color: color,
         }
-    }
-
-    pub fn set_text<S>(&mut self, text: S)
-        where S: Into<String>
-    {
-        self.text = text.into();
     }
 
     pub fn set_font_size(&mut self, font_size: u32) {

@@ -1,11 +1,6 @@
 use std::cell::Cell;
 use std::rc::Rc;
 
-pub enum TimerTickResult {
-    None,
-    Reset,
-}
-
 /// Timer represents a timed event
 pub struct Timer {
     interval: f64,

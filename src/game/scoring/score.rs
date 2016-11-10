@@ -1,4 +1,4 @@
-use piston_window::{Context, Graphics, Texture, Transformed};
+use piston_window::{Graphics, Transformed};
 use piston_window::character::CharacterCache;
 
 use game::config::Config;

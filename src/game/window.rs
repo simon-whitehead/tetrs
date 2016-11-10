@@ -1,11 +1,8 @@
-use std::borrow::Borrow;
 use std::ops::{Deref, DerefMut};
 
 use piston_window::*;
 
 pub struct GameWindow {
-    width: u32,
-    height: u32,
     pub piston_window: PistonWindow,
 }
 
@@ -13,11 +10,7 @@ impl GameWindow {
     pub fn new<S>(width: u32, height: u32, title: S) -> GameWindow
         where S: Into<String>
     {
-        GameWindow {
-            piston_window: Self::create_window(width, height, title.into()),
-            width: width,
-            height: height,
-        }
+        GameWindow { piston_window: Self::create_window(width, height, title.into()) }
     }
 
     fn create_window(width: u32, height: u32, title: String) -> PistonWindow {
