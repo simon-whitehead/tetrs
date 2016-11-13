@@ -10,6 +10,7 @@ use game::tetromino::Tetromino;
 pub struct Grid {
     pub boxes: [[Option<Block>; 10]; 22],
     overlay: [[Option<Block>; 10]; 22],
+    border: rectangle::Rectangle,
 }
 
 impl Grid {
@@ -17,10 +18,12 @@ impl Grid {
         Grid {
             boxes: [[None; 10]; 22],
             overlay: [[None; 10]; 22],
+            border: rectangle::Rectangle::new([1.0; 4]),
         }
     }
 
     pub fn apply_tetromino(&mut self, tetromino: &Tetromino, config: &Config) {
+        // Clear the overlay
         self.overlay = [[None; 10]; 22];
 
         for y in 0..4 {
@@ -102,13 +105,13 @@ impl Grid {
         let tile_size = options.config.tile_size;
 
         // Draw the "border" first
-        rectangle([1.0; 4],
-                  [(grid_offset - 2.0) as f64,
-                   (grid_offset - 2.0) as f64,
-                   (tile_size * 10.0 + 4.0) as f64,
-                   (tile_size * 20.0 + 4.0) as f64],
-                  options.context.transform,
-                  options.graphics);
+        self.border.draw([(grid_offset - 2.0) as f64,
+                          (grid_offset - 2.0) as f64,
+                          (tile_size * 10.0 + 4.0) as f64,
+                          (tile_size * 20.0 + 4.0) as f64],
+                         &Default::default(),
+                         options.context.transform,
+                         options.graphics);
 
         for y in 2..22 {
             for x in 0..10 {
