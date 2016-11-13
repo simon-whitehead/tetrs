@@ -17,6 +17,8 @@ use game::window::GameWindow;
 use game::leveling::{Level, LevelingSystem, DefaultLevelingSystem, LevelMetaData};
 use game::scoring::{Score, ScoringSystem, ScoreMetaData, DefaultScoringSystem};
 
+static LOCK_STEP_TIME: f64 = 0.5;
+
 static DROP_TIME: f64 = 0.5;
 static DROP_FACTOR: f64 = 0.1;
 
@@ -98,7 +100,7 @@ impl Game {
             asset_factory: AssetFactory::new(gfx_factory),
             quit: false,
             grid: Grid::new(),
-            lockstep_timer: Timer::new(0.5, time.clone()),
+            lockstep_timer: Timer::new(LOCK_STEP_TIME, time.clone()),
             drop_timer: Timer::new(DROP_TIME, time.clone()),
             score: score,
             level: level,
