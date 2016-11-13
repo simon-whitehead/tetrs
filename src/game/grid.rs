@@ -57,6 +57,7 @@ impl Grid {
         }
     }
 
+    /// Permanently stores the Tetromino in the grid
     pub fn store_tetromino(&mut self, tetromino: &Tetromino) {
         for y in 0..4 {
             for x in 0..4 {
@@ -117,8 +118,10 @@ impl Grid {
                          options.context.transform,
                          options.graphics);
 
-        for y in 2..22 {
-            for x in 0..10 {
+        for y in 2..options.config.grid_size.1 {
+            for x in 0..options.config.grid_size.0 {
+                let x = x as usize;
+                let y = y as usize;
 
                 let adjusted_y = y - 2;
                 if let Some(ref block) = self.overlay[y][x] {
@@ -126,7 +129,7 @@ impl Grid {
                     continue;
                 }
 
-                match self.boxes[y][x] {
+                match self.boxes[y as usize][x as usize] {
                     Some(ref block) => {
                         block.render(x, y, options.config, options.context, options.graphics, e);
                     }
