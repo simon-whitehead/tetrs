@@ -11,6 +11,7 @@ pub struct Grid {
     pub boxes: [[Option<Block>; 10]; 22],
     overlay: [[Option<Block>; 10]; 22],
     border: rectangle::Rectangle,
+    block: rectangle::Rectangle,
 }
 
 impl Grid {
@@ -19,6 +20,7 @@ impl Grid {
             boxes: [[None; 10]; 22],
             overlay: [[None; 10]; 22],
             border: rectangle::Rectangle::new([1.0; 4]),
+            block: rectangle::Rectangle::new([0.0; 4]),
         }
     }
 
@@ -127,13 +129,13 @@ impl Grid {
                         block.render(x, y, options.config, options.context, options.graphics, e);
                     }
                     None => {
-                        rectangle([0.0, 0.0, 0.0, 1.0],
-                                  [x as f64 * tile_size + grid_offset,
-                                   adjusted_y as f64 * tile_size + grid_offset,
-                                   tile_size as f64,
-                                   tile_size as f64],
-                                  options.context.transform,
-                                  options.graphics);
+                        self.block.draw([x as f64 * tile_size + grid_offset,
+                                         adjusted_y as f64 * tile_size + grid_offset,
+                                         tile_size as f64,
+                                         tile_size as f64],
+                                        &Default::default(),
+                                        options.context.transform,
+                                        options.graphics);
                     }
                 };
             }
