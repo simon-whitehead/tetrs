@@ -118,6 +118,8 @@ impl Grid {
                          options.context.transform,
                          options.graphics);
 
+        // Start drawing the grid from 2 onwards. The official Tetris rules
+        // state that the grid is 10x22 but the top two rows are hidden
         for y in 2..options.config.grid_size.1 {
             for x in 0..options.config.grid_size.0 {
                 let x = x as usize;
