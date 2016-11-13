@@ -20,7 +20,7 @@ impl Grid {
             boxes: [[None; 10]; 22],
             overlay: [[None; 10]; 22],
             border: rectangle::Rectangle::new([1.0; 4]),
-            block: rectangle::Rectangle::new([0.0; 4]),
+            block: rectangle::Rectangle::new([0.0, 0.0, 0.0, 1.0]),
         }
     }
 
