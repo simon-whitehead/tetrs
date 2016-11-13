@@ -28,15 +28,13 @@ impl Grid {
         // Clear the overlay
         self.overlay = [[None; 10]; 22];
 
+        // Iterate over the blocks in the active Tetromino and apply them
+        // to the overlay
         for y in 0..4 {
             for x in 0..4 {
                 if let Some(ref block) = tetromino.blocks[y][x] {
                     let x = (tetromino.x + x as i32) as usize;
                     let y = (tetromino.y + y as i32) as usize;
-
-                    let (shadow_x, shadow_y) = tetromino.find_landing_xy(&self.boxes);
-                    let shadow_x = (shadow_x + x as i32) as usize;
-                    let shadow_y = (shadow_y + y as i32) as usize;
 
                     if x >= 10 || y >= 22 {
                         continue;
@@ -46,6 +44,10 @@ impl Grid {
 
                     // If the shadow is enabled, also store that in the overlay
                     if config.shadow_enabled {
+                        let (shadow_x, shadow_y) = tetromino.find_landing_xy(&self.boxes);
+                        let shadow_x = (shadow_x + x as i32) as usize;
+                        let shadow_y = (shadow_y + y as i32) as usize;
+
                         if let Some(ref shadow) = tetromino.shadow[y][x] {
                             self.overlay[shadow_y][shadow_x] = Some(*shadow);
                         }
