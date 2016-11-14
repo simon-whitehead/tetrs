@@ -1,5 +1,6 @@
 use piston_window::*;
 
+use game::scenes::MenuResult;
 use game::window::GameWindow;
 
 pub trait Scene {
@@ -13,4 +14,14 @@ pub enum SceneResult {
     NewGame,
     GameOver,
     Quit,
+}
+
+impl From<MenuResult> for SceneResult {
+    fn from(menu: MenuResult) -> SceneResult {
+        match menu {
+            MenuResult::NewGame => SceneResult::NewGame,
+            MenuResult::Quit => SceneResult::Quit,
+            _ => SceneResult::None,
+        }
+    }
 }
