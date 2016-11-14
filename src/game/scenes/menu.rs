@@ -80,15 +80,13 @@ impl Scene for Menu {
                 character_cache: self.asset_factory.font.as_mut().unwrap(),
             };
 
-            let mut index = 0;
-            for item in &mut self.menu_items {
+            for (index, item) in self.menu_items.iter_mut().enumerate() {
                 if self.selected_index == index {
                     item.label.set_font_size(24);
                 } else {
                     item.label.set_font_size(16);
                 }
                 item.label.render(&mut options);
-                index += 1;
             }
         });
     }
