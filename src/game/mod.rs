@@ -22,4 +22,4 @@ mod scoring;
 pub use self::config::{Config, ConfigBuilder};
 pub use self::window::GameWindow;
 
-pub use self::scenes::{MainMenu, GameOver, Game, Scene, SceneResult};
+pub use self::scenes::{Menu, MenuResult, GameOver, Game, Scene, SceneResult};

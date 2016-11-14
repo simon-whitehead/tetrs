@@ -80,13 +80,15 @@ impl Scene for Menu {
                 character_cache: self.asset_factory.font.as_mut().unwrap(),
             };
 
+            let mut index = 0;
             for item in &mut self.menu_items {
-                if item.selected {
+                if self.selected_index == index {
                     item.label.set_font_size(24);
                 } else {
                     item.label.set_font_size(16);
                 }
                 item.label.render(&mut options);
+                index += 1;
             }
         });
     }
@@ -94,7 +96,6 @@ impl Scene for Menu {
 
 pub struct MenuItem {
     result: MenuResult,
-    selected: bool,
     label: ::game::text::Text,
 }
 
@@ -104,8 +105,7 @@ impl MenuItem {
     {
         MenuItem {
             result: result,
-            selected: false,
-            label: ::game::text::Text::new(text.into(), 16, 0, item_count * 50, [1.0; 4]),
+            label: ::game::text::Text::new(text.into(), 16, 50, 200 + (item_count * 50), [1.0; 4]),
         }
     }
 }
