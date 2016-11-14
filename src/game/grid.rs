@@ -33,14 +33,14 @@ impl Grid {
         for y in 0..4 {
             for x in 0..4 {
                 if let Some(ref block) = tetromino.blocks[y][x] {
-                    let x = (tetromino.x + x as i32) as usize;
-                    let y = (tetromino.y + y as i32) as usize;
+                    let tetromino_x = (tetromino.x + x as i32) as usize;
+                    let tetromino_y = (tetromino.y + y as i32) as usize;
 
                     if x >= 10 || y >= 22 {
                         continue;
                     }
 
-                    self.overlay[y][x] = Some(*block);
+                    self.overlay[tetromino_y][tetromino_x] = Some(*block);
 
                     // If the shadow is enabled, also store that in the overlay
                     if config.shadow_enabled {
