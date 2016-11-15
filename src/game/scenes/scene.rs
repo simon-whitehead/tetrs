@@ -12,6 +12,8 @@ pub enum SceneResult {
     None,
     MainMenu,
     NewGame,
+    PauseGame,
+    ResumeGame,
     GameOver,
     Quit,
 }
@@ -19,7 +21,9 @@ pub enum SceneResult {
 impl From<MenuResult> for SceneResult {
     fn from(menu: MenuResult) -> SceneResult {
         match menu {
+            MenuResult::MainMenu => SceneResult::MainMenu,
             MenuResult::NewGame => SceneResult::NewGame,
+            MenuResult::ResumeGame => SceneResult::ResumeGame,
             MenuResult::Quit => SceneResult::Quit,
             _ => SceneResult::None,
         }

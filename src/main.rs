@@ -18,6 +18,7 @@ fn main() {
         .build();
 
     let main_menu = create_main_menu(config, &window);
+    let pause_menu = create_pause_menu(config, &window);
 
     let game = RefCell::new(Game::new(config, window.piston_window.factory.clone()));
     let gameover = RefCell::new(GameOver::new(config, window.piston_window.factory.clone()));
@@ -26,13 +27,29 @@ fn main() {
 
     while let Some(e) = window.next() {
 
-        match scene.process(&e) {
-            SceneResult::MainMenu => scene = main_menu.borrow_mut(),
-            SceneResult::NewGame => scene = game.borrow_mut(),
-            SceneResult::GameOver => scene = gameover.borrow_mut(),
+        let scene_result = scene.process(&e);
+
+        match scene_result {
+            SceneResult::MainMenu => {
+                scene = main_menu.borrow_mut();
+            }
+            SceneResult::NewGame => {
+                game.borrow_mut().reset();
+                scene = game.borrow_mut();
+            }
+            SceneResult::PauseGame => {
+                scene = pause_menu.borrow_mut();
+            }
+            SceneResult::ResumeGame => {
+                game.borrow_mut().unpause();
+                scene = game.borrow_mut();
+            }
+            SceneResult::GameOver => {
+                scene = gameover.borrow_mut();
+            }
             SceneResult::Quit => break,
             _ => (),
-        }
+        };
 
         scene.render(&mut window, &e);
     }
@@ -44,4 +61,13 @@ fn create_main_menu(config: Config, window: &GameWindow) -> RefCell<Menu> {
     main_menu.add_item("Quit", MenuResult::Quit);
 
     RefCell::new(main_menu)
+}
+
+fn create_pause_menu(config: Config, window: &GameWindow) -> RefCell<Menu> {
+    let mut pause_menu = Menu::new(config, window.piston_window.factory.clone());
+    pause_menu.add_item("Resume", MenuResult::ResumeGame);
+    pause_menu.add_item("New Game", MenuResult::NewGame);
+    pause_menu.add_item("Main Menu", MenuResult::MainMenu);
+
+    RefCell::new(pause_menu)
 }

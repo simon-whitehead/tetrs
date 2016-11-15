@@ -111,6 +111,8 @@ impl MenuItem {
 #[derive(Clone, Copy)]
 pub enum MenuResult {
     None,
+    MainMenu,
     NewGame,
+    ResumeGame,
     Quit,
 }

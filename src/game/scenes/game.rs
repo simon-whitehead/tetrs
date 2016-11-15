@@ -26,7 +26,7 @@ pub struct Game {
     time: Rc<Cell<f64>>,
     config: Config,
     asset_factory: AssetFactory,
-    quit: bool,
+    pause: bool,
     grid: Grid,
     lockstep_timer: Timer,
     drop_timer: Timer,
@@ -60,8 +60,8 @@ impl Scene for Game {
             _ => (),
         }
 
-        if self.quit {
-            SceneResult::MainMenu
+        if self.pause {
+            SceneResult::PauseGame
         } else {
             SceneResult::None
         }
@@ -98,7 +98,7 @@ impl Game {
             time: time.clone(),
             config: config,
             asset_factory: AssetFactory::new(gfx_factory),
-            quit: false,
+            pause: false,
             grid: Grid::new(),
             lockstep_timer: Timer::new(LOCK_STEP_TIME, time.clone()),
             drop_timer: Timer::new(DROP_TIME, time.clone()),
@@ -112,6 +112,21 @@ impl Game {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.pause = false;
+        self.time = RcCell!(0.0);
+        self.grid = Grid::new();
+        self.tetromino = self.tetromino_factory.create(&self.config);
+        self.total_lines_cleared = 0;
+        self.score = Score::new(&self.config);
+        self.level = Level::new(&self.config);
+        self.lockstep_timer = Timer::new(LOCK_STEP_TIME, self.time.clone());
+        self.drop_timer = Timer::new(DROP_TIME, self.time.clone());
+    }
+
+    pub fn unpause(&mut self) {
+        self.pause = false;
+    }
 
     /// Increments the global time
     fn update_time(&mut self, delta: f64) {
@@ -187,7 +202,7 @@ impl Game {
     fn handle_input(&mut self, input: &Input) {
         if let Input::Press(ref button) = *input {
             match *button {
-                Button::Keyboard(Key::Escape) => self.quit = true,
+                Button::Keyboard(Key::Escape) => self.pause = true,
                 Button::Keyboard(Key::Z) => {
                     if let RotationResult::Allow = self.tetromino
                         .can_rotate(Rotation::CounterClockwise, &self.grid.boxes) {
