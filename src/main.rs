@@ -1,3 +1,4 @@
+#[macro_use]
 mod game;
 
 use std::cell::{RefCell, RefMut};
@@ -17,8 +18,8 @@ fn main() {
         .ui_color([1.0; 4])
         .build();
 
-    let main_menu = create_main_menu(config, &window);
-    let pause_menu = create_pause_menu(config, &window);
+    let main_menu = RefCell::new(create_main_menu(config, &window));
+    let pause_menu = RefCell::new(create_pause_menu(config, &window));
 
     let game = RefCell::new(Game::new(config, window.piston_window.factory.clone()));
     let gameover = RefCell::new(GameOver::new(config, window.piston_window.factory.clone()));
@@ -55,19 +56,19 @@ fn main() {
     }
 }
 
-fn create_main_menu(config: Config, window: &GameWindow) -> RefCell<Menu> {
-    let mut main_menu = Menu::new(config, window.piston_window.factory.clone());
-    main_menu.add_item("New Game", MenuResult::NewGame);
-    main_menu.add_item("Quit", MenuResult::Quit);
-
-    RefCell::new(main_menu)
+fn create_main_menu(config: Config, window: &GameWindow) -> Menu {
+    menu![
+        (config, window.piston_window.factory.clone()),
+        "New Game" => MenuResult::NewGame,
+        "Quit" => MenuResult::Quit
+    ]
 }
 
-fn create_pause_menu(config: Config, window: &GameWindow) -> RefCell<Menu> {
-    let mut pause_menu = Menu::new(config, window.piston_window.factory.clone());
-    pause_menu.add_item("Resume", MenuResult::ResumeGame);
-    pause_menu.add_item("New Game", MenuResult::NewGame);
-    pause_menu.add_item("Main Menu", MenuResult::MainMenu);
-
-    RefCell::new(pause_menu)
+fn create_pause_menu(config: Config, window: &GameWindow) -> Menu {
+    menu![
+        (config, window.piston_window.factory.clone()),
+        "Resume" => MenuResult::ResumeGame,
+        "New Game" => MenuResult::NewGame,
+        "Main Manu" => MenuResult::MainMenu
+    ]
 }
