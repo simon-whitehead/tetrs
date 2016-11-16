@@ -27,10 +27,7 @@ fn main() {
     let mut scene: RefMut<Scene> = main_menu.borrow_mut();
 
     while let Some(e) = window.next() {
-
-        let scene_result = scene.process(&e);
-
-        match scene_result {
+        match scene.process(&e) {
             SceneResult::MainMenu => {
                 scene = main_menu.borrow_mut();
             }
