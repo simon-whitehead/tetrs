@@ -9,12 +9,15 @@ extern crate piston_window;
 use game::{Config, ConfigBuilder, Menu, MenuResult, Game, GameOver, GameWindow, Scene, SceneResult};
 
 fn main() {
+    let shadow_arg = std::env::args().nth(1);
+    let shadow_enabled = shadow_arg.is_some() && shadow_arg.unwrap() == "--shadow-enabled";
+
     let mut window = GameWindow::new(450, 600, "TetRS");
     let config = ConfigBuilder::new()
         .grid_size((10, 22))
         .grid_offset(10.0)
         .tile_size(29.0)
-        .shadow(false)
+        .shadow(shadow_enabled)
         .ui_color([1.0; 4])
         .build();
 
