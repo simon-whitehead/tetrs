@@ -15,6 +15,15 @@ Via cargo:
 cargo run
 ```
 
+### How to play:
+
+Controls are:
+
+* Arrow keys for movement.
+* `Z` for counter-clockwise Tetromino rotation.
+* `X` for clockwise Tetromino rotation.
+* `Space` to drop a Tetromino immediately.
+
 ### Shadow
 
 The game supports a "Shadow" toggle to preview where a Tetromino will drop. You can toggle this via the `--shadow-enabled` flag:
