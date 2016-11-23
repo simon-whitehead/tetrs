@@ -7,5 +7,7 @@
 # More information here http://doc.crates.io/guide.html#cargotoml-vs-cargolock
 Cargo.lock
 
+.DS_Store
+
 *.swp
 *.bk
