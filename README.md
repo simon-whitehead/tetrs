@@ -23,6 +23,7 @@ Controls are:
 * `Z` for counter-clockwise Tetromino rotation.
 * `X` for clockwise Tetromino rotation.
 * `Space` to drop a Tetromino immediately.
+* `Escape` pauses the game.
 
 ### Shadow
 
